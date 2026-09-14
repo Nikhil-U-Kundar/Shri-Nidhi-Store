@@ -30,31 +30,4 @@ npm install
 npm run dev
 ```
 
-App: http://localhost:5173
 
-## Logins (from `.env`)
-
-| Role | Email | Password |
-|------|-------|----------|
-| Shop Owner | `owner@shreenidhi.store` | `Owner@1234` |
-| Customer | `rahul.sharma@example.com` | `password123` |
-
-No public sign-up. Create/update the owner account with `npm run ensure-owner` in `backend`.
-
-## Database
-
-Configured in `backend/.env`:
-
-```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=nikhil_admin
-DB_PASSWORD=Nikhil@123
-DB_NAME=srinidhi
-```
-
-Schema: `tables/tables.sql`
-
-- `users`
-- `users_balance_details` (credit / grocery purchases)
-- `user_paid_details` (payments)
