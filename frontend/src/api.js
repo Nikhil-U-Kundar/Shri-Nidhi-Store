@@ -28,11 +28,13 @@ export async function api(path, options = {}) {
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`/api${path}`, {
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const res = await fetch(`${API_URL}/api${path}`, {
     ...options,
     headers,
   });
-
+  
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(data.message || 'Request failed');
