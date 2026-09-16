@@ -5,8 +5,8 @@ import { pool, query } from './store.js';
 async function ensureOwner() {
   const email = process.env.DEFAULT_ADMIN_EMAIL || 'owner@shreenidhi.store';
   const password = process.env.DEFAULT_ADMIN_PASSWORD || 'Owner@1234';
-  const name = process.env.DEFAULT_ADMIN_NAME || 'Suresh Bhai';
-  const phone = process.env.SHOP_OWNER_PHONE || '9823140912';
+  const name = process.env.DEFAULT_ADMIN_NAME || 'Mallika';
+  const phone = process.env.SHOP_OWNER_PHONE || '8970128830';
   const hash = await bcrypt.hash(password, 10);
 
   const existing = await query(

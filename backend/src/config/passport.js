@@ -4,23 +4,57 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import bcrypt from 'bcryptjs';
 import { query, safeUser } from '../db/store.js';
 
+function digitsOnly(value = '') {
+  return String(value).replace(/\D/g, '');
+}
+
 export function configurePassport() {
   passport.use(
     new LocalStrategy(
-      { usernameField: 'email', passwordField: 'password' },
-      async (email, password, done) => {
+      {
+        usernameField: 'login',
+        passwordField: 'password',
+        passReqToCallback: true,
+      },
+      async (req, login, password, done) => {
         try {
-          const result = await query(
-            `SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1`,
-            [email]
-          );
+          const role = req.body.role || 'customer';
+          const loginValue = String(login || '').trim();
+          const phoneDigits = digitsOnly(loginValue);
+
+          let result;
+          if (role === 'admin' || loginValue.includes('@')) {
+            result = await query(
+              `SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1`,
+              [loginValue]
+            );
+          } else {
+            result = await query(
+              `SELECT * FROM users
+               WHERE regexp_replace(COALESCE(phone, ''), '\\D', '', 'g') = $1
+               LIMIT 1`,
+              [phoneDigits]
+            );
+          }
+
           const user = result.rows[0];
           if (!user) {
-            return done(null, false, { message: 'Invalid email or password' });
+            return done(null, false, {
+              message:
+                role === 'admin'
+                  ? 'Invalid email or password'
+                  : 'Invalid phone number or password',
+            });
           }
+
           const ok = await bcrypt.compare(password, user.password);
           if (!ok) {
-            return done(null, false, { message: 'Invalid email or password' });
+            return done(null, false, {
+              message:
+                role === 'admin'
+                  ? 'Invalid email or password'
+                  : 'Invalid phone number or password',
+            });
           }
           return done(null, safeUser(user));
         } catch (err) {

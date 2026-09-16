@@ -357,4 +357,47 @@ router.post('/transactions/payment', requireAuth, requireAdmin, async (req, res)
   }
 });
 
+router.post('/customers/:id/reminder', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT * FROM users WHERE id = $1 AND role = 'customer' LIMIT 1`,
+      [req.params.id]
+    );
+    const user = result.rows[0];
+    if (!user) return res.status(404).json({ message: 'Customer not found' });
+
+    const phoneDigits = String(user.phone || '').replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      return res.status(400).json({ message: 'Customer has no valid phone number' });
+    }
+
+    const bal = await getUserBalance(user.id);
+    const ownerName = process.env.SHOP_OWNER_NAME || 'Mallika';
+    const storeName = 'Shree Nidhi Store';
+    const message =
+      `Namaste ${user.name}, reminder from ${storeName}. ` +
+      `Your outstanding due is ₹${Number(bal.balanceDue).toLocaleString('en-IN')}. ` +
+      `Please pay soon. - ${ownerName}`;
+
+    // Return SMS / WhatsApp deep links so the phone notification can be sent
+    const waPhone = phoneDigits.length === 10 ? `91${phoneDigits}` : phoneDigits;
+    const smsHref = `sms:${phoneDigits}?body=${encodeURIComponent(message)}`;
+    const whatsappHref = `https://wa.me/${waPhone}?text=${encodeURIComponent(message)}`;
+
+    console.log(`[reminder] to ${phoneDigits}: ${message}`);
+
+    res.json({
+      ok: true,
+      customerId: user.id,
+      customerName: user.name,
+      phone: phoneDigits,
+      message,
+      smsHref,
+      whatsappHref,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

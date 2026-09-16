@@ -26,6 +26,8 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [reminderMsg, setReminderMsg] = useState('');
+  const [sendingId, setSendingId] = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -57,8 +59,8 @@ export default function Admin() {
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
-    const t = setTimeout(load, 250);
-    return () => clearTimeout(t);
+    const timer = setTimeout(load, 250);
+    return () => clearTimeout(timer);
   }, [q]);
 
   const counts = useMemo(() => {
@@ -80,6 +82,30 @@ export default function Admin() {
       load();
     } catch (err) {
       setError(err.message);
+    }
+  }
+
+  async function sendReminder(customerId) {
+    setSendingId(customerId);
+    setReminderMsg('');
+    setError('');
+    try {
+      const data = await api(`/customers/${customerId}/reminder`, {
+        method: 'POST',
+      });
+      // Push notification to customer's phone via WhatsApp
+      if (data.whatsappHref) {
+        window.open(data.whatsappHref, '_blank', 'noopener,noreferrer');
+      } else if (data.smsHref) {
+        window.location.href = data.smsHref;
+      }
+      setReminderMsg(
+        `${t('reminderSent')} ${data.customerName} (${data.phone})`
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSendingId(null);
     }
   }
 
@@ -168,6 +194,9 @@ export default function Admin() {
         {error && (
           <p className="text-sm text-due bg-due-soft rounded-xl px-3 py-2">{error}</p>
         )}
+        {reminderMsg && (
+          <p className="text-sm text-brand bg-brand-soft rounded-xl px-3 py-2">{reminderMsg}</p>
+        )}
 
         <div className="space-y-3">
           {customers.map((c, idx) => (
@@ -218,10 +247,12 @@ export default function Admin() {
                 {c.status === 'pending' && (
                   <button
                     type="button"
-                    className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-[10px] font-bold text-due shadow-sm"
+                    disabled={sendingId === c.id}
+                    onClick={() => sendReminder(c.id)}
+                    className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-[10px] font-bold text-due shadow-sm disabled:opacity-60"
                   >
                     <Send size={10} />
-                    {t('sendReminder')}
+                    {sendingId === c.id ? t('sendingReminder') : t('sendReminder')}
                   </button>
                 )}
               </div>

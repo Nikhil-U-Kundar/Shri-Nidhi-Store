@@ -20,7 +20,7 @@ export default function Passbook() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  const [shopPhone, setShopPhone] = useState('9823140912');
+  const [shopPhone, setShopPhone] = useState('8970128830');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -36,11 +36,11 @@ export default function Passbook() {
     if (!user || user.role !== 'customer') return;
     Promise.all([
       api(`/customers/${user.id}/passbook`),
-      api('/auth/shop-info').catch(() => ({ ownerPhone: '9823140912' })),
+      api('/auth/shop-info').catch(() => ({ ownerPhone: '8970128830' })),
     ])
       .then(([passbook, shop]) => {
         setData(passbook);
-        setShopPhone(shop.ownerPhone || '9823140912');
+        setShopPhone(shop.ownerPhone || '8970128830');
       })
       .catch((err) => setError(err.message));
   }, [user]);
