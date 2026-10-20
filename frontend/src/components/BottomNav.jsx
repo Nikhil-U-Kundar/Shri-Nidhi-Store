@@ -11,10 +11,7 @@ export default function BottomNav({ active }) {
   const items = [
     { to: '/store', label: t('navStore'), icon: Store, match: '/store' },
     {
-      to:
-        isAuthenticated && user?.role === 'customer'
-          ? '/passbook'
-          : '/login?next=/passbook',
+      to: user?.role === 'customer' ? '/passbook' : '/login?next=/passbook',
       label: t('passbook'),
       icon: BookOpen,
       match: '/passbook',
