@@ -98,12 +98,16 @@ export default function Login() {
         return;
       }
 
-      const loginId = role === 'admin' ? email : phone;
+      const form_data = new FormData(e.currentTarget);
+      const typed_password = String(form_data.get('password') || password);
+      const typed_email = String(form_data.get('email') || email);
+      const typed_phone = String(form_data.get('phone') || phone);
+      const loginId = role === 'admin' ? typed_email : typed_phone;
       const data = await api('/auth/login', {
         method: 'POST',
         body: JSON.stringify({
           login: loginId,
-          password,
+          password: typed_password,
           role,
         }),
       });
@@ -252,11 +256,12 @@ export default function Login() {
                   size={16}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
                 />
-                <input
-                  className="input-field"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, ''))}
+                  <input
+                    className="input-field"
+                    type="tel"
+                    name="phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, ''))}
                   placeholder={t('phonePlaceholder')}
                   required
                   minLength={10}
@@ -285,6 +290,7 @@ export default function Login() {
                 <input
                   className="input-field"
                   type="email"
+                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('emailPlaceholder')}
@@ -317,8 +323,10 @@ export default function Login() {
                 <input
                   className="input-field"
                   type={showPassword ? 'text' : 'password'}
+                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onInput={(e) => setPassword(e.target.value)}
                   placeholder={
                     isCustomer ? t('passwordIsPhone') : t('passwordPlaceholder')
                   }
