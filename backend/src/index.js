@@ -10,10 +10,21 @@ import catalogRoutes from './routes/catalog.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowed_origins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'https://shri-nidhi-store.vercel.app',
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin(origin, callback) {
+      if (!origin || allowed_origins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -50,7 +61,7 @@ app.use((err, _req, res, _next) => {
 async function start() {
   try {
     const now = await testConnection();
-    console.log(`Connected to PostgreSQL (${process.env.DB_NAME}) at ${now}`);
+    console.log(`Connected to PostgreSQL at ${now}`);
   } catch (err) {
     console.error('PostgreSQL is not reachable:', err.code, err.message);
     console.error('Sign in and sign up will fail until the database accepts connections.');

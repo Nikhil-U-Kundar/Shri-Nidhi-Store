@@ -3,17 +3,54 @@ import 'dotenv/config';
 
 const { Pool } = pg;
 
-export const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: Number(process.env.DB_PORT || 5432),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  connectionTimeoutMillis: 8000,
-  idleTimeoutMillis: 10000,
-  query_timeout: 8000,
-  statement_timeout: 8000,
-});
+function clean_connection_string(raw) {
+  try {
+    const url = new URL(raw);
+    url.searchParams.delete('channel_binding');
+    return url.toString();
+  } catch {
+    return raw;
+  }
+}
+
+function needs_ssl(host, connection_string) {
+  if (connection_string && /sslmode=require|neon\.tech/i.test(connection_string)) return true;
+  if (!host) return false;
+  return host !== 'localhost' && host !== '127.0.0.1';
+}
+
+function pool_config() {
+  const shared = {
+    connectionTimeoutMillis: 20000,
+    idleTimeoutMillis: 10000,
+    query_timeout: 20000,
+    statement_timeout: 20000,
+  };
+  const connection_string = process.env.DATABASE_URL
+    ? clean_connection_string(process.env.DATABASE_URL)
+    : '';
+
+  if (connection_string) {
+    return {
+      ...shared,
+      connectionString: connection_string,
+      ssl: needs_ssl('', connection_string) ? { rejectUnauthorized: false } : undefined,
+    };
+  }
+
+  const host = process.env.DB_HOST || 'localhost';
+  return {
+    ...shared,
+    host,
+    port: Number(process.env.DB_PORT || 5432),
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: needs_ssl(host, '') ? { rejectUnauthorized: false } : undefined,
+  };
+}
+
+export const pool = new Pool(pool_config());
 
 export function dbErrorMessage(err) {
   const code = err?.code || '';

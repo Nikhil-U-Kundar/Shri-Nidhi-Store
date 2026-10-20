@@ -30,7 +30,7 @@ export async function api(path, options = {}) {
 
   const API_URL = import.meta.env.VITE_API_URL;
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 12000);
+  const timer = setTimeout(() => controller.abort(), 25000);
 
   let res;
   try {
