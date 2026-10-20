@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   BookOpenCheck,
   CircleDot,
@@ -18,9 +18,18 @@ import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
+function safeNextPath(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  if (!raw.startsWith('/') || raw.startsWith('//')) return null;
+  return raw;
+}
+
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const [searchParams] = useSearchParams();
+  const nextPath = safeNextPath(searchParams.get('next'));
+  const needsCheckout = searchParams.get('checkout') === '1';
+  const { login, isAuthenticated, user } = useAuth();
   const { t } = useLanguage();
   const [role, setRole] = useState('customer');
   const [mode, setMode] = useState('signin'); // signin | signup
@@ -32,6 +41,23 @@ export default function Login() {
   const [shop, setShop] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  function redirectAfterAuth(authUser) {
+    if (authUser.role === 'admin') {
+      navigate(nextPath?.startsWith('/admin') ? nextPath : '/admin');
+      return;
+    }
+    if (nextPath) {
+      navigate(needsCheckout ? `${nextPath}?checkout=1` : nextPath);
+      return;
+    }
+    navigate('/store');
+  }
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+    redirectAfterAuth(user);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     api('/auth/shop-info')
@@ -68,7 +94,7 @@ export default function Login() {
           body: JSON.stringify({ name, phone }),
         });
         login(data.token, data.user);
-        navigate('/passbook');
+        redirectAfterAuth(data.user);
         return;
       }
 
@@ -82,11 +108,7 @@ export default function Login() {
         }),
       });
       login(data.token, data.user);
-      if (data.user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/passbook');
-      }
+      redirectAfterAuth(data.user);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -108,6 +130,11 @@ export default function Login() {
           </div>
           <h2 className="text-xl font-bold text-ink">{t('welcome')}</h2>
           <p className="text-sm text-muted mt-1">{t('welcomeSub')}</p>
+          {needsCheckout && (
+            <p className="mt-3 text-xs font-semibold text-brand bg-brand-soft rounded-xl px-3 py-2">
+              {t('loginToBuyHint')}
+            </p>
+          )}
           <div className="flex flex-wrap gap-2 mt-4">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-sky px-3 py-1.5 text-xs font-semibold text-ink">
               <ShieldCheck size={14} className="text-brand" />
@@ -118,6 +145,12 @@ export default function Login() {
               {t('shopOpen')}
             </span>
           </div>
+          <Link
+            to="/store"
+            className="mt-4 inline-flex text-sm font-bold text-brand underline underline-offset-2"
+          >
+            {t('browseStoreWithoutLogin')} →
+          </Link>
         </section>
 
         <div className="grid grid-cols-2 gap-2 p-1 bg-white rounded-2xl shadow-sm animate-rise animate-rise-delay-1">

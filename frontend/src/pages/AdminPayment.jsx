@@ -324,7 +324,7 @@ export default function AdminPayment() {
         </p>
       </div>
 
-      <BottomNav active="/new-bill" />
+      <BottomNav active="/admin" />
     </div>
   );
 }

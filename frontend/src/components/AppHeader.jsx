@@ -4,7 +4,11 @@ import { BookOpenCheck, ChevronDown, Languages, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function AppHeader({ subtitleKey = 'villageLedger', subtitle }) {
+export default function AppHeader({
+  subtitleKey = 'villageLedger',
+  subtitle,
+  showActive = false,
+}) {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
   const { lang, setLang, t, label } = useLanguage();
@@ -48,8 +52,13 @@ export default function AppHeader({ subtitleKey = 'villageLedger', subtitle }) {
             <h1 className="text-[15px] font-bold text-ink leading-tight truncate">
               {t('storeName')}
             </h1>
-            <p className="text-[11px] text-muted truncate">
-              {subtitle || t(subtitleKey)}
+            <p className="text-[11px] text-muted truncate flex items-center gap-1.5">
+              <span className="truncate">{subtitle || t(subtitleKey)}</span>
+              {showActive && (
+                <span className="shrink-0 inline-flex items-center rounded-full bg-brand-soft text-brand px-1.5 py-0.5 text-[9px] font-bold tracking-wide">
+                  ACTIVE
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -105,13 +114,20 @@ export default function AppHeader({ subtitleKey = 'villageLedger', subtitle }) {
               title={t('logout')}
               className="inline-flex items-center gap-1.5 rounded-full bg-due-soft text-due px-3 py-1.5 text-xs font-bold"
             >
+              <span className="hidden sm:inline h-6 w-6 rounded-full bg-brand text-white text-[10px] font-bold items-center justify-center sm:flex">
+                {initials}
+              </span>
               <LogOut size={14} />
               {t('logout')}
             </button>
           ) : (
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand to-emerald-700 text-white text-xs font-bold flex items-center justify-center">
-              {initials}
-            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="inline-flex items-center gap-1 rounded-full bg-brand text-white px-3 py-1.5 text-xs font-bold"
+            >
+              {t('signIn')}
+            </button>
           )}
         </div>
       </header>

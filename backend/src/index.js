@@ -6,6 +6,7 @@ import { configurePassport } from './config/passport.js';
 import { testConnection, pool } from './db/store.js';
 import authRoutes from './routes/auth.js';
 import ledgerRoutes from './routes/ledger.js';
+import catalogRoutes from './routes/catalog.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api', catalogRoutes);
 app.use('/api', ledgerRoutes);
 
 app.use((err, _req, res, _next) => {

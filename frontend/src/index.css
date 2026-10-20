@@ -44,6 +44,71 @@ body {
   position: relative;
 }
 
+@media (min-width: 768px) {
+  .app-shell {
+    width: min(920px, 100%);
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .app-shell {
+    width: min(1080px, 100%);
+  }
+}
+
+.bottom-nav-shell {
+  width: min(440px, 100%);
+}
+
+@media (min-width: 768px) {
+  .bottom-nav-shell {
+    width: min(920px, 100%);
+  }
+}
+
+@media (min-width: 1100px) {
+  .bottom-nav-shell {
+    width: min(1080px, 100%);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.chip-active {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+}
+
+.chip-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .card {
   background: #fff;
   border-radius: 18px;
