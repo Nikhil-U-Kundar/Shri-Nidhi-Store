@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { query } from '../db/store.js';
+import { query, dbErrorMessage } from '../db/store.js';
 import { requireAuth } from '../config/passport.js';
 
 const router = Router();
@@ -109,7 +109,10 @@ router.post('/register', async (req, res) => {
         message: 'Phone number already registered. Please sign in instead.',
       });
     }
-    return res.status(500).json({ message: err.message });
+    const down = ['EACCES', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET'].includes(
+      err.code
+    );
+    return res.status(down ? 503 : 500).json({ message: dbErrorMessage(err) });
   }
 });
 

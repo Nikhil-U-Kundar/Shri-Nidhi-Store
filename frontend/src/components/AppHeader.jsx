@@ -29,7 +29,7 @@ export default function AppHeader({
   function handleLogoutConfirm() {
     setConfirmLogout(false);
     logout();
-    navigate('/login');
+    navigate('/store');
   }
 
   const initials = user?.name

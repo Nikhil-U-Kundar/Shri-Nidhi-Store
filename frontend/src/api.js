@@ -29,12 +29,25 @@ export async function api(path, options = {}) {
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const API_URL = import.meta.env.VITE_API_URL;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
 
-  const res = await fetch(`${API_URL}/api${path}`, {
-    ...options,
-    headers,
-  });
-  
+  let res;
+  try {
+    res = await fetch(`${API_URL}/api${path}`, {
+      ...options,
+      headers,
+      signal: options.signal || controller.signal,
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Server took too long. Database may be unreachable.');
+    }
+    throw new Error('Cannot reach the server. Check that the API and database are running.');
+  } finally {
+    clearTimeout(timer);
+  }
+
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(data.message || 'Request failed');

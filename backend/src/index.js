@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import { configurePassport } from './config/passport.js';
-import { testConnection, pool } from './db/store.js';
+import { testConnection, pool, dbErrorMessage } from './db/store.js';
 import authRoutes from './routes/auth.js';
 import ledgerRoutes from './routes/ledger.js';
 import catalogRoutes from './routes/catalog.js';
@@ -41,7 +41,10 @@ app.use('/api', ledgerRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
-  res.status(500).json({ message: err.message || 'Server error' });
+  const dbDown = ['EACCES', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET'].includes(
+    err.code
+  );
+  res.status(dbDown ? 503 : 500).json({ message: dbErrorMessage(err) });
 });
 
 async function start() {
@@ -49,11 +52,8 @@ async function start() {
     const now = await testConnection();
     console.log(`Connected to PostgreSQL (${process.env.DB_NAME}) at ${now}`);
   } catch (err) {
-    console.error('Failed to connect to PostgreSQL:', err.message);
-    console.error(
-      `Check DB_HOST/DB_PORT/DB_USER/DB_PASSWORD/DB_NAME in backend/.env`
-    );
-    process.exit(1);
+    console.error('PostgreSQL is not reachable:', err.code, err.message);
+    console.error('Sign in and sign up will fail until the database accepts connections.');
   }
 
   app.listen(PORT, () => {

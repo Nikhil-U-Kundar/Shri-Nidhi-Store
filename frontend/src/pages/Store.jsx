@@ -30,6 +30,7 @@ export default function Store() {
   const [error, setError] = useState('');
   const [checkoutMsg, setCheckoutMsg] = useState('');
   const [checkingOut, setCheckingOut] = useState(false);
+  const [khataBalance, setKhataBalance] = useState(null);
 
   async function load() {
     try {
@@ -55,6 +56,20 @@ export default function Store() {
     const timer = setTimeout(load, 250);
     return () => clearTimeout(timer);
   }, [q]);
+
+  useEffect(() => {
+    if (!isAuthenticated || user?.role !== 'customer') {
+      setKhataBalance(null);
+      return;
+    }
+    api(`/customers/${user.id}`)
+      .then((data) => {
+        const due = Number(data.customer?.balanceDue) || 0;
+        const credit = Number(data.customer?.totalCredit) || 0;
+        setKhataBalance(credit > 0 || due !== 0 ? due : null);
+      })
+      .catch(() => setKhataBalance(null));
+  }, [isAuthenticated, user]);
 
   const totalVisible = useMemo(() => {
     if (category === 'all') {
@@ -127,16 +142,18 @@ export default function Store() {
       <div className="mx-4 mt-1 rounded-xl bg-brand text-white px-3 py-2 flex items-center gap-2 text-[11px] sm:text-xs animate-rise">
         <Bell size={14} className="shrink-0 opacity-90" />
         <p className="flex-1 leading-snug">{t('welcomeBanner')}</p>
-        {!isAuthenticated && (
-          <button
-            type="button"
-            onClick={() => navigate('/login')}
-            className="shrink-0 font-bold underline underline-offset-2"
-          >
-            {t('signInTab')}
-          </button>
-        )}
       </div>
+
+      {khataBalance != null && (
+        <button
+          type="button"
+          onClick={() => navigate('/passbook')}
+          className="mx-4 mt-3 w-[calc(100%-2rem)] text-left rounded-xl bg-white border border-sky-deep px-3 py-2.5 flex items-center justify-between"
+        >
+          <span className="text-xs font-semibold text-muted">{t('khataBalance')}</span>
+          <span className="text-sm font-bold text-brand">{formatINR(khataBalance)}</span>
+        </button>
+      )}
 
       <div className="px-4 space-y-4 mt-3 pb-36">
         <div className="relative animate-rise animate-rise-delay-1">
@@ -275,7 +292,7 @@ export default function Store() {
 
       {count > 0 && (
         <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 bottom-nav-shell px-3 z-40">
-          <div className="rounded-2xl bg-[#1a2b3c] text-white px-3 py-2.5 flex items-center gap-3 shadow-lg">
+          <div className="rounded-2xl bg-white text-ink border border-sky-deep px-3 py-2.5 flex items-center gap-3 shadow-lg">
             <div className="relative shrink-0">
               <div className="h-10 w-10 rounded-xl bg-brand flex items-center justify-center">
                 <ShoppingBag size={18} />
@@ -288,7 +305,7 @@ export default function Store() {
               <p className="text-sm font-bold truncate">
                 {count} {t('itemsSelected')} · {formatINR(total)}
               </p>
-              <p className="text-[11px] text-emerald-300 font-semibold">
+              <p className="text-[11px] text-brand font-semibold">
                 {isAuthenticated && user?.role === 'customer'
                   ? t('khataReady')
                   : t('loginToCheckout')}

@@ -4,14 +4,17 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function BottomNav({ active }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { t } = useLanguage();
   const role = user?.role || 'guest';
 
   const items = [
     { to: '/store', label: t('navStore'), icon: Store, match: '/store' },
     {
-      to: isAuthenticated ? '/passbook' : '/login',
+      to:
+        isAuthenticated && user?.role === 'customer'
+          ? '/passbook'
+          : '/login?next=/passbook',
       label: t('passbook'),
       icon: BookOpen,
       match: '/passbook',

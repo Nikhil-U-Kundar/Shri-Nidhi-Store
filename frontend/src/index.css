@@ -2,16 +2,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #006837;
-  --color-brand-dark: #00522c;
-  --color-brand-soft: #e8f5ee;
-  --color-sky: #e8f0fe;
-  --color-sky-deep: #d6e4ff;
+  --color-brand: #6e61e0;
+  --color-brand-dark: #574ed0;
+  --color-brand-soft: #eeecfc;
+  --color-sky: #f4f3ff;
+  --color-sky-deep: #e3e0fa;
   --color-due: #c62828;
   --color-due-soft: #fde8e8;
-  --color-page: #f3f5f8;
-  --color-ink: #1a1f2c;
-  --color-muted: #6b7280;
+  --color-page: #f5f8fc;
+  --color-ink: #0f2744;
+  --color-muted: #5b6b80;
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Fraunces", Georgia, serif;
 }
@@ -20,17 +20,24 @@
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light;
+  background: #ffffff;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
+  background: #ffffff;
+  color: var(--color-ink);
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: radial-gradient(1200px 600px at 10% -10%, #dff0e8 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #e4ecff 0%, transparent 45%),
+  background: radial-gradient(1200px 600px at 10% -10%, #ece9ff 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #f7fbff 0%, transparent 45%),
     var(--color-page);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
@@ -110,9 +117,10 @@ body {
 }
 
 .card {
-  background: #fff;
+  background: #ffffff;
+  border: 1px solid #e6eef8;
   border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(26, 31, 44, 0.06);
+  box-shadow: 0 8px 24px rgba(110, 97, 224, 0.08);
 }
 
 .btn-primary {
@@ -135,8 +143,8 @@ body {
 
 .input-field {
   width: 100%;
-  background: var(--color-sky);
-  border: 1px solid transparent;
+  background: #ffffff;
+  border: 1px solid #d5e3f7;
   border-radius: 14px;
   padding: 14px 44px;
   font-size: 15px;
@@ -145,8 +153,8 @@ body {
 }
 
 .input-field:focus {
-  border-color: #9fc4a8;
-  box-shadow: 0 0 0 3px rgba(0, 104, 55, 0.12);
+  border-color: #b7b0f0;
+  box-shadow: 0 0 0 3px rgba(110, 97, 224, 0.16);
 }
 
 @keyframes rise-in {

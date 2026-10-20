@@ -24,7 +24,7 @@ export default function Passbook() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate('/login?next=/passbook');
       return;
     }
     if (user?.role === 'admin') {
@@ -54,6 +54,11 @@ export default function Passbook() {
   }
 
   const { customer, summary, entries } = data;
+  const has_khata =
+    Number(summary.balanceDue) !== 0 ||
+    Number(summary.totalCredit) > 0 ||
+    Number(summary.totalPaid) > 0 ||
+    (entries && entries.length > 0);
 
   return (
     <div className="app-shell">
@@ -79,32 +84,38 @@ export default function Passbook() {
           </a>
         </section>
 
-        <section className="card p-3 space-y-3 animate-rise animate-rise-delay-1">
-          <div className="rounded-2xl bg-due-soft p-4">
-            <p className="text-[11px] font-bold tracking-wide text-due flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-due" />
-              {t('totalBalanceToPay')}
-            </p>
-            <p className="text-3xl font-bold text-due mt-1">
-              {formatINR(summary.balanceDue)}
-            </p>
-            <p className="text-xs text-muted mt-1">{t('remainingDue')}</p>
-          </div>
-          <div className="rounded-2xl bg-brand-soft p-4 flex items-start gap-3">
-            <div className="h-9 w-9 rounded-full bg-brand text-white flex items-center justify-center shrink-0">
-              <CheckCircle2 size={18} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-ink">
-                {t('totalPaidTillNow')}{' '}
-                <span className="text-brand font-bold text-lg ml-1">
-                  {formatINR(summary.totalPaid)}
-                </span>
+        {has_khata ? (
+          <section className="card p-3 space-y-3 animate-rise animate-rise-delay-1">
+            <div className="rounded-2xl bg-due-soft p-4">
+              <p className="text-[11px] font-bold tracking-wide text-due flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-due" />
+                {t('totalBalanceToPay')}
               </p>
-              <p className="text-xs text-muted mt-1">{t('totalPaymentsMade')}</p>
+              <p className="text-3xl font-bold text-due mt-1">
+                {formatINR(summary.balanceDue)}
+              </p>
+              <p className="text-xs text-muted mt-1">{t('remainingDue')}</p>
             </div>
-          </div>
-        </section>
+            <div className="rounded-2xl bg-brand-soft p-4 flex items-start gap-3">
+              <div className="h-9 w-9 rounded-full bg-brand text-white flex items-center justify-center shrink-0">
+                <CheckCircle2 size={18} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-ink">
+                  {t('totalPaidTillNow')}{' '}
+                  <span className="text-brand font-bold text-lg ml-1">
+                    {formatINR(summary.totalPaid)}
+                  </span>
+                </p>
+                <p className="text-xs text-muted mt-1">{t('totalPaymentsMade')}</p>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="card p-4 text-sm text-muted animate-rise animate-rise-delay-1">
+            {t('noKhataYet')}
+          </section>
+        )}
 
         <div className="flex items-center justify-between animate-rise animate-rise-delay-2">
           <h3 className="font-bold flex items-center gap-2">

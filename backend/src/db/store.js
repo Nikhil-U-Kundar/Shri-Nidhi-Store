@@ -9,7 +9,25 @@ export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  connectionTimeoutMillis: 8000,
+  idleTimeoutMillis: 10000,
+  query_timeout: 8000,
+  statement_timeout: 8000,
 });
+
+export function dbErrorMessage(err) {
+  const code = err?.code || '';
+  if (['EACCES', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'ECONNRESET', '57P01'].includes(code)) {
+    return 'Database connection failed. PostgreSQL is not reachable from this server.';
+  }
+  if (code === '28P01' || code === '28000') {
+    return 'Database login failed. Check the database user and password.';
+  }
+  if (code === '3D000') {
+    return 'Database not found on the server.';
+  }
+  return err?.message || 'Database error';
+}
 
 export async function query(text, params) {
   return pool.query(text, params);
