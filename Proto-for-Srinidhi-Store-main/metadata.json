@@ -1,0 +1,6 @@
+{
+  "name": "Sri Nidhi Store & General Store",
+  "description": "Interactive prototype of Sri Nidhi Store & General Store featuring fast neighborhood grocery delivery, counter billing & take bill, Kirana Khata store credit, live order tracking, and store management console.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

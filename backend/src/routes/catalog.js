@@ -13,6 +13,9 @@ function mapProduct(row) {
     selling > 0 ? Math.round(((selling - cost) / selling) * 1000) / 10 : 0;
   const stock = Number(row.stock_quantity);
   const threshold = Number(row.low_stock_threshold);
+  const mrp = row.mrp != null ? Number(row.mrp) : selling;
+  const discount =
+    mrp > selling && mrp > 0 ? Math.round(((mrp - selling) / mrp) * 100) : 0;
   return {
     id: row.id,
     categoryId: row.category_id,
@@ -32,6 +35,16 @@ function mapProduct(row) {
     isLowStock: stock <= threshold,
     isVisible: Boolean(row.is_visible),
     badgeText: row.badge_text || '',
+    description: row.description || '',
+    rating: row.rating != null ? Number(row.rating) : 4.5,
+    reviewsCount: row.reviews_count != null ? Number(row.reviews_count) : 0,
+    featured: Boolean(row.featured),
+    isOffer: Boolean(row.is_offer) || discount > 0,
+    mfg: row.mfg || '',
+    origin: row.origin || 'India',
+    expiry: row.expiry || '',
+    fssaiNumber: row.fssai_number || '',
+    discount,
     margin,
     marginPct,
     createdAt: row.created_at,
@@ -144,6 +157,13 @@ router.post('/admin/products', requireAuth, requireAdmin, async (req, res) => {
       lowStockThreshold = 5,
       isVisible = true,
       badgeText = '',
+      description = '',
+      featured = false,
+      isOffer = false,
+      mfg = '',
+      origin = 'India',
+      expiry = '',
+      fssaiNumber = '',
     } = req.body || {};
 
     if (!name || sellingPrice == null) {
@@ -153,8 +173,9 @@ router.post('/admin/products', requireAuth, requireAdmin, async (req, res) => {
     const result = await query(
       `INSERT INTO products (
          category_id, name, brand, image_url, pack_label, weight_value, weight_unit,
-         selling_price, mrp, wholesale_cost, stock_quantity, low_stock_threshold, is_visible, badge_text
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+         selling_price, mrp, wholesale_cost, stock_quantity, low_stock_threshold, is_visible, badge_text,
+         description, featured, is_offer, mfg, origin, expiry, fssai_number
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
        RETURNING id`,
       [
         categoryId || null,
@@ -171,6 +192,13 @@ router.post('/admin/products', requireAuth, requireAdmin, async (req, res) => {
         Math.max(0, Number(lowStockThreshold) || 5),
         Boolean(isVisible),
         String(badgeText || '').trim(),
+        String(description || '').trim(),
+        Boolean(featured),
+        Boolean(isOffer),
+        String(mfg || '').trim(),
+        String(origin || 'India').trim(),
+        String(expiry || '').trim(),
+        String(fssaiNumber || '').trim(),
       ]
     );
 
@@ -214,6 +242,14 @@ router.patch('/admin/products/:id', requireAuth, requireAdmin, async (req, res) 
           : cur.low_stock_threshold,
       is_visible: b.isVisible !== undefined ? Boolean(b.isVisible) : cur.is_visible,
       badge_text: b.badgeText !== undefined ? String(b.badgeText).trim() : cur.badge_text,
+      description: b.description !== undefined ? String(b.description).trim() : cur.description,
+      featured: b.featured !== undefined ? Boolean(b.featured) : cur.featured,
+      is_offer: b.isOffer !== undefined ? Boolean(b.isOffer) : cur.is_offer,
+      mfg: b.mfg !== undefined ? String(b.mfg).trim() : cur.mfg,
+      origin: b.origin !== undefined ? String(b.origin).trim() : cur.origin,
+      expiry: b.expiry !== undefined ? String(b.expiry).trim() : cur.expiry,
+      fssai_number:
+        b.fssaiNumber !== undefined ? String(b.fssaiNumber).trim() : cur.fssai_number,
     };
 
     await query(
@@ -221,8 +257,10 @@ router.patch('/admin/products/:id', requireAuth, requireAdmin, async (req, res) 
          category_id = $1, name = $2, brand = $3, image_url = $4, pack_label = $5,
          weight_value = $6, weight_unit = $7, selling_price = $8, mrp = $9,
          wholesale_cost = $10, stock_quantity = $11, low_stock_threshold = $12,
-         is_visible = $13, badge_text = $14, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $15`,
+         is_visible = $13, badge_text = $14, description = $15, featured = $16,
+         is_offer = $17, mfg = $18, origin = $19, expiry = $20, fssai_number = $21,
+         updated_at = CURRENT_TIMESTAMP
+       WHERE id = $22`,
       [
         next.category_id,
         next.name,
@@ -238,6 +276,13 @@ router.patch('/admin/products/:id', requireAuth, requireAdmin, async (req, res) 
         next.low_stock_threshold,
         next.is_visible,
         next.badge_text,
+        next.description ?? '',
+        next.featured ?? false,
+        next.is_offer ?? false,
+        next.mfg ?? '',
+        next.origin ?? 'India',
+        next.expiry ?? '',
+        next.fssai_number ?? '',
         id,
       ]
     );

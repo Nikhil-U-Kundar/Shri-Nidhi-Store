@@ -1,185 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --color-brand: #6e61e0;
-  --color-brand-dark: #574ed0;
-  --color-brand-soft: #eeecfc;
-  --color-sky: #f4f3ff;
-  --color-sky-deep: #e3e0fa;
-  --color-due: #c62828;
-  --color-due-soft: #fde8e8;
-  --color-page: #f5f8fc;
-  --color-ink: #0f2744;
-  --color-muted: #5b6b80;
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Fraunces", Georgia, serif;
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
 }
 
+/* Custom smooth scroll and scrollbar */
 * {
-  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
-html {
-  color-scheme: light;
-  background: #ffffff;
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
-  background: #ffffff;
-  color: var(--color-ink);
-}
-
-body {
-  margin: 0;
-  font-family: var(--font-sans);
-  background: radial-gradient(1200px 600px at 10% -10%, #ece9ff 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #f7fbff 0%, transparent 45%),
-    var(--color-page);
-  color: var(--color-ink);
-  -webkit-font-smoothing: antialiased;
-}
-
-.app-shell {
-  width: min(440px, 100%);
-  margin: 0 auto;
-  min-height: 100vh;
-  padding-bottom: 88px;
-  position: relative;
-}
-
-@media (min-width: 768px) {
-  .app-shell {
-    width: min(920px, 100%);
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-
-@media (min-width: 1100px) {
-  .app-shell {
-    width: min(1080px, 100%);
-  }
-}
-
-.bottom-nav-shell {
-  width: min(440px, 100%);
-}
-
-@media (min-width: 768px) {
-  .bottom-nav-shell {
-    width: min(920px, 100%);
-  }
-}
-
-@media (min-width: 1100px) {
-  .bottom-nav-shell {
-    width: min(1080px, 100%);
-  }
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  color: var(--color-ink);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.chip-active {
-  background: var(--color-brand);
-  border-color: var(--color-brand);
-  color: #fff;
-}
-
-.chip-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.chip-scroll::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-.card {
-  background: #ffffff;
-  border: 1px solid #e6eef8;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(110, 97, 224, 0.08);
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.btn-primary {
-  background: var(--color-brand);
-  color: #fff;
-  border: none;
-  border-radius: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.btn-primary:hover {
-  background: var(--color-brand-dark);
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
-}
-
-.input-field {
-  width: 100%;
-  background: #ffffff;
-  border: 1px solid #d5e3f7;
-  border-radius: 14px;
-  padding: 14px 44px;
-  font-size: 15px;
-  outline: none;
-  color: var(--color-ink);
-}
-
-.input-field:focus {
-  border-color: #b7b0f0;
-  box-shadow: 0 0 0 3px rgba(110, 97, 224, 0.16);
-}
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
+@media print {
+  body * {
+    visibility: hidden;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  #printable-receipt, #printable-receipt * {
+    visibility: visible;
   }
-}
-
-.animate-rise {
-  animation: rise-in 0.45s ease both;
-}
-
-.animate-rise-delay-1 {
-  animation-delay: 0.08s;
-}
-
-.animate-rise-delay-2 {
-  animation-delay: 0.16s;
-}
-
-.animate-rise-delay-3 {
-  animation-delay: 0.24s;
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }

@@ -7,6 +7,9 @@ import { testConnection, pool, dbErrorMessage } from './db/store.js';
 import authRoutes from './routes/auth.js';
 import ledgerRoutes from './routes/ledger.js';
 import catalogRoutes from './routes/catalog.js';
+import ordersRoutes from './routes/orders.js';
+import billsRoutes from './routes/bills.js';
+import profileRoutes from './routes/profile.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,6 +52,9 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api', catalogRoutes);
 app.use('/api', ledgerRoutes);
+app.use('/api', ordersRoutes);
+app.use('/api', billsRoutes);
+app.use('/api', profileRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

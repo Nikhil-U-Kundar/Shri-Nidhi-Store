@@ -1,27 +1,28 @@
-# Shree Nidhi Store
+# Sri Nidhi Store
 
-Digital village ledger (khata) app — Vite React frontend + Node.js/Passport backend.
+Neighborhood grocery storefront + POS billing + Khata ledger — Vite/React frontend + Node.js/Passport backend.
 
-## Screens
+UI flow matches the proto: customer storefront (home, deals, account, order tracking), cart/checkout (COD / UPI / Khata), counter billing, and admin operations console.
 
-- **Store** (`/store`) — Customer product storefront + cart → khata checkout
-- **Admin Items** (`/admin/items`) — Product catalog manager (add, price, stock)
-- **Login** — Customer / Shop Owner role login
-- **Passbook** — Customer balance + transaction history
-- **Shop Admin / Khata Admin** — Outstanding dues + customer list
-- **Accept Payment / Give Credit** — Record ledger entries
+## Screens (proto flow)
+
+- **Storefront** — catalog, categories, search, product quick view, cart drawer
+- **Deals** — offer products
+- **Billing Counter** — POS create bill (Cash / UPI / Card / Khata)
+- **Account** — profile, orders, khata ledger, addresses
+- **Order Tracking** — live order status
+- **Admin Console** — catalog, stock, orders, bills (toggle from top bar)
 
 ## Database
 
 Base schema: `tables/tables.sql`
 
-Product catalog patch (for existing DBs):
+Patches for existing DBs:
 
 ```bash
 psql -U <user> -d <db> -f tables/patches/001_products_catalog.sql
+psql -U <user> -d <db> -f tables/patches/002_orders_bills_addresses.sql
 ```
-
-Creates: `categories`, `products`, `stock_logs`, `cart_items` (+ seed data).
 
 ## Quick start
 
@@ -30,6 +31,7 @@ Creates: `categories`, `products`, `stock_logs`, `cart_items` (+ seed data).
 ```bash
 cd backend
 npm install
+# apply SQL patches if DB already exists
 npm run seed
 npm run dev
 ```
@@ -44,6 +46,13 @@ npm install
 npm run dev
 ```
 
-App: http://localhost:5173/store
+App: http://localhost:5173
 
+### Demo logins (after seed)
 
+| Role | Login | Password |
+|------|-------|----------|
+| Customer | `9876543210` | `password123` |
+| Admin | `admin@shreenidhi.store` (or `DEFAULT_ADMIN_EMAIL`) | `password123` (or `DEFAULT_ADMIN_PASSWORD`) |
+
+Use the top bar **Simulate Login** / **Switch to Admin Panel** to jump between modes.
