@@ -33,11 +33,11 @@ const MainLayout: React.FC = () => {
   const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50 text-stone-900 font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen min-w-0 max-w-full overflow-x-hidden flex flex-col bg-stone-50 text-stone-900 font-sans selection:bg-emerald-600 selection:text-white">
       {viewMode === 'admin' ? (
         <AdminDashboard />
       ) : (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0 max-w-full overflow-x-hidden">
           <Navbar />
           <CategoryNav />
           <main className="flex-1">

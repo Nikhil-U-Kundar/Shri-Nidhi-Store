@@ -35,7 +35,7 @@ export const ProductQuickViewModal: React.FC = () => {
               <img
                 src={product.image}
                 alt={product.name}
-                className="max-h-64 object-contain"
+                className="max-h-48 sm:max-h-64 w-full max-w-full object-contain"
                 referrerPolicy="no-referrer"
               />
             </div>

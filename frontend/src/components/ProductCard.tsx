@@ -16,7 +16,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isLowStock = product.stock > 0 && product.stock <= 5;
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-emerald-600/40 transition duration-200 group relative">
+    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-emerald-600/40 transition duration-200 group relative min-w-0 w-full max-w-full">
       {/* Discount / Low Stock Badge */}
       <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 items-start">
         {product.discount > 0 && (
@@ -43,7 +43,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Product Image Container with Resilient Fallback */}
       <div
         onClick={() => setSelectedProductDetail(product)}
-        className="p-4 bg-stone-50/70 flex items-center justify-center relative cursor-pointer aspect-square overflow-hidden"
+        className="p-2 sm:p-4 bg-stone-50/70 flex items-center justify-center relative cursor-pointer aspect-square overflow-hidden min-w-0"
       >
         {!imageFailed ? (
           <img
@@ -52,7 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             loading="lazy"
             referrerPolicy="no-referrer"
             onError={() => setImageFailed(true)}
-            className="object-contain h-36 w-full group-hover:scale-105 transition duration-300"
+            className="object-contain max-h-24 sm:max-h-32 md:max-h-36 w-full max-w-full group-hover:scale-105 transition duration-300"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 bg-stone-100 p-4 text-center rounded-xl">
@@ -64,10 +64,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Details Body */}
-      <div className="p-3.5 flex-1 flex flex-col justify-between space-y-3">
-        <div>
-          <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium">
-            <span className="uppercase tracking-wider">{product.brand}</span>
+      <div className="p-2.5 sm:p-3.5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3 min-w-0">
+        <div className="min-w-0">
+          <div className="flex items-center justify-between gap-1 text-[11px] text-stone-500 font-medium min-w-0">
+            <span className="uppercase tracking-wider truncate min-w-0">{product.brand}</span>
             <span className="flex items-center text-amber-600 font-bold">
               <Star className="w-3 h-3 fill-current mr-0.5 text-amber-500" />
               {product.rating}
@@ -105,20 +105,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               Out of Stock
             </button>
           ) : cartItem ? (
-            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-300 rounded-xl p-1">
+            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-300 rounded-xl p-0.5 sm:p-1 min-w-0">
               <button
                 onClick={() => updateCartItemQty(product.id, -1)}
-                className="w-7 h-7 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-800 font-bold hover:bg-emerald-100 transition cursor-pointer"
+                className="w-7 h-7 shrink-0 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-800 font-bold hover:bg-emerald-100 transition cursor-pointer"
                 aria-label="Decrease quantity"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
-              <span className="text-xs font-black text-emerald-950 tabular-nums">
+              <span className="text-xs font-black text-emerald-950 tabular-nums px-1">
                 {cartItem.qty}
               </span>
               <button
                 onClick={() => updateCartItemQty(product.id, 1)}
-                className="w-7 h-7 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-800 font-bold hover:bg-emerald-100 transition cursor-pointer"
+                className="w-7 h-7 shrink-0 bg-white rounded-lg shadow-sm flex items-center justify-center text-emerald-800 font-bold hover:bg-emerald-100 transition cursor-pointer"
                 aria-label="Increase quantity"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -127,10 +127,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           ) : (
             <button
               onClick={() => addToCart(product)}
-              className="w-full bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-emerald-700/20 flex items-center justify-center gap-1.5 transition cursor-pointer"
+              className="w-full bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white py-1.5 rounded-xl text-[11px] sm:text-xs font-bold shadow-sm shadow-emerald-700/20 flex items-center justify-center gap-1 sm:gap-1.5 transition cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add to Cart</span>
+              <Plus className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Add</span>
             </button>
           )}
         </div>

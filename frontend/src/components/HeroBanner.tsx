@@ -16,9 +16,9 @@ export const HeroBanner: React.FC = () => {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
+    <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 min-w-0 w-full">
       {/* Hero Showcase Card */}
-      <div className="relative rounded-3xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800 text-white min-h-[360px] flex items-center">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800 text-white min-h-[240px] sm:min-h-[320px] md:min-h-[360px] flex items-center">
         {/* Background Image with Scrim */}
         <div className="absolute inset-0 z-0">
           <img
@@ -30,13 +30,13 @@ export const HeroBanner: React.FC = () => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 p-6 sm:p-10 md:p-14 max-w-2xl space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-amber-400 text-stone-950 shadow">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>SRI NIDHI STORE · MANDI WHOLESALE RATES</span>
+        <div className="relative z-10 p-4 sm:p-10 md:p-14 max-w-2xl space-y-3 sm:space-y-4 min-w-0">
+          <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-black bg-amber-400 text-stone-950 shadow max-w-full">
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">SRI NIDHI STORE · MANDI RATES</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white">
             Daily Ration &amp; Groceries. <br />
             <span className="text-emerald-400">At Pure Local Kirana Prices.</span>
           </h1>
@@ -91,7 +91,7 @@ export const HeroBanner: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2 sm:gap-3">
           {quickCategories.map((cat) => {
             const Icon = cat.icon;
             return (
@@ -102,13 +102,13 @@ export const HeroBanner: React.FC = () => {
                   const el = document.getElementById('catalogSection');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="bg-white p-3.5 rounded-2xl border border-stone-200 hover:border-emerald-500 hover:shadow-md text-center group transition cursor-pointer flex flex-col items-center justify-between"
+                className="bg-white p-2 sm:p-3.5 rounded-2xl border border-stone-200 hover:border-emerald-500 hover:shadow-md text-center group transition cursor-pointer flex flex-col items-center justify-between min-w-0"
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center mb-2 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition">
                   <Icon className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-xs text-stone-900 line-clamp-1">{cat.name}</h3>
+                <div className="min-w-0 w-full">
+                  <h3 className="font-bold text-[10px] sm:text-xs text-stone-900 line-clamp-2">{cat.name}</h3>
                   <span className="text-[10px] text-stone-400 block mt-0.5">{cat.count}</span>
                 </div>
               </button>

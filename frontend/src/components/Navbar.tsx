@@ -92,23 +92,23 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* Main 3-Zone Navigation Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 py-2.5 sm:py-3 md:min-h-20">
           
           {/* ZONE 1: Brand Wordmark & Location */}
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <button
               onClick={() => setCustomerTab('home')}
-              className="flex items-center gap-2.5 text-left group cursor-pointer"
+              className="flex items-center gap-2 text-left group cursor-pointer min-w-0"
             >
-              <div className="w-11 h-11 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-md shadow-emerald-700/25 group-hover:scale-105 transition">
-                <ShoppingBasket className="w-6 h-6" />
+              <div className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-md shadow-emerald-700/25 group-hover:scale-105 transition">
+                <ShoppingBasket className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
-                <span className="text-xl font-black text-stone-900 tracking-tight flex items-center gap-1.5">
+              <div className="min-w-0">
+                <span className="text-sm sm:text-xl font-black text-stone-900 tracking-tight flex items-center gap-1">
                   SRI NIDHI <span className="text-emerald-700">STORE</span>
                 </span>
-                <span className="text-[10px] font-semibold text-stone-500 tracking-wider uppercase block -mt-1">
+                <span className="hidden xs:block text-[10px] font-semibold text-stone-500 tracking-wider uppercase -mt-1 truncate">
                   General Store · Best Mandi Prices
                 </span>
               </div>
@@ -125,7 +125,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* ZONE 2: Search Input & Instant Suggestions */}
-          <div className="flex-1 max-w-xl mx-2 relative" ref={searchRef}>
+          <div className="w-full md:flex-1 md:max-w-xl md:mx-2 relative order-last md:order-none" ref={searchRef}>
             <div className="relative">
               <input
                 type="text"
@@ -195,7 +195,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* ZONE 3: Primary Actions (Nav links, Khata, User, Cart) */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Deals link */}
             <button
               onClick={() => setCustomerTab('deals')}
@@ -216,7 +216,7 @@ export const Navbar: React.FC = () => {
                   setCustomerTab('account');
                   setAccountSubTab('khata');
                 }}
-                className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer"
+                className="hidden sm:flex items-center gap-2 px-2 sm:px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer"
                 title="Your Kirana Khata / Monthly Store Credit"
               >
                 <Wallet className="w-4 h-4 text-emerald-700 shrink-0" />
@@ -241,7 +241,7 @@ export const Navbar: React.FC = () => {
                     setIsUserMenuOpen(!isUserMenuOpen);
                   }
                 }}
-                className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-100 rounded-xl transition border border-stone-200 sm:border-transparent cursor-pointer"
+                className="flex items-center gap-2 px-2 sm:px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-100 rounded-xl transition border border-stone-200 sm:border-transparent cursor-pointer"
               >
                 <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
                   {isLoggedIn ? 'RS' : <User className="w-4 h-4" />}
@@ -318,7 +318,7 @@ export const Navbar: React.FC = () => {
             {/* Cart Trigger Button */}
             <button
               onClick={() => setIsCartDrawerOpen(true)}
-              className="relative flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-emerald-700/20 transition cursor-pointer"
+              className="relative flex items-center gap-1.5 sm:gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-emerald-700/20 transition cursor-pointer"
               aria-label={`Cart with ${cartCount} items`}
             >
               <ShoppingBag className="w-4 h-4" />

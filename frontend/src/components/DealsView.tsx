@@ -35,13 +35,13 @@ export const DealsView: React.FC = () => {
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-black text-stone-900">
+          <h3 className="text-base sm:text-lg font-black text-stone-900">
             Featured Deals ({deals.length} items with &gt;10% off)
           </h3>
           <span className="text-xs text-stone-500">Mandi verified prices</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
           {deals.map((prod) => (
             <ProductCard key={prod.id} product={prod} />
           ))}

@@ -39,11 +39,11 @@ export const StorefrontView: React.FC = () => {
       <HeroBanner />
 
       {/* Main Catalog Section */}
-      <section id="catalogSection" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <section id="catalogSection" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 min-w-0 w-full">
         {/* Header with Sort Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 gap-3">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 gap-3 min-w-0">
+          <div className="min-w-0">
+            <h2 className="text-lg sm:text-2xl font-black text-stone-900 tracking-tight break-words">
               {selectedCategory === 'All Products'
                 ? "Today's Mandi Fresh Stock & Daily Essentials"
                 : selectedCategory}
@@ -53,12 +53,12 @@ export const StorefrontView: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-stone-500 font-semibold">Sort by:</span>
+          <div className="flex items-center gap-2 text-xs min-w-0 w-full sm:w-auto">
+            <span className="text-stone-500 font-semibold shrink-0">Sort by:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-white border border-stone-300 rounded-xl px-3 py-2 font-semibold text-stone-800 focus:outline-none focus:border-emerald-600 cursor-pointer shadow-sm"
+              className="bg-white border border-stone-300 rounded-xl px-3 py-2 font-semibold text-stone-800 focus:outline-none focus:border-emerald-600 cursor-pointer shadow-sm min-w-0 flex-1 sm:flex-none max-w-full"
             >
               <option value="popular">Popularity & Rating</option>
               <option value="price-low">Price: Low to High</option>
@@ -86,7 +86,7 @@ export const StorefrontView: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mt-6">
             {sortedProducts.map((prod) => (
               <ProductCard key={prod.id} product={prod} />
             ))}
@@ -96,7 +96,7 @@ export const StorefrontView: React.FC = () => {
 
       {/* Store Trust / Guarantees Strip */}
       <section className="bg-white border-y border-stone-200 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
               <Zap className="w-6 h-6" />
@@ -147,7 +147,7 @@ export const StorefrontView: React.FC = () => {
               <div className="w-8 h-8 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold">
                 SN
               </div>
-              <span className="text-lg font-black text-white tracking-tight">
+              <span className="text-base sm:text-lg font-black text-white tracking-tight break-words">
                 SRI NIDHI STORE &amp; GENERAL STORE
               </span>
             </div>
