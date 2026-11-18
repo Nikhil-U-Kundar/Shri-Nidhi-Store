@@ -6,6 +6,7 @@ import { useAuth } from '@/features/auth';
 import { QuantityStepper } from '@/shared/ui/QuantityStepper';
 import { useBillActions } from '../model/useBillActions';
 import { BillArchive } from './BillArchive';
+import { QuickBillPanel } from './QuickBillPanel';
 
 const CASHIER_NAME = 'Suresh Kumar';
 const GST_RATE = 0.05;
@@ -23,7 +24,7 @@ const LABEL_CLASS = 'mb-1 block font-semibold text-stone-600';
 
 /** Counter point-of-sale: build a bill from catalog items and loose items, then take it. */
 export function PosBilling() {
-  const [view, setView] = useState<'create' | 'archive'>('create');
+  const [view, setView] = useState<'quick' | 'create' | 'archive'>('quick');
   const { bills } = useBilling();
 
   return (
@@ -40,6 +41,17 @@ export function PosBilling() {
         </div>
 
         <div role="tablist" aria-label="Billing views" className="flex w-full items-center gap-1 rounded-xl bg-stone-200/80 p-1 text-xs font-bold sm:w-auto">
+          <button
+            role="tab"
+            aria-selected={view === 'quick'}
+            type="button"
+            onClick={() => setView('quick')}
+            className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 py-2 transition sm:flex-none ${
+              view === 'quick' ? 'bg-white font-black text-emerald-900 shadow-sm' : 'text-stone-600 hover:text-stone-900'
+            }`}
+          >
+            <span>Quick Bill</span>
+          </button>
           <button
             role="tab"
             aria-selected={view === 'create'}
@@ -68,7 +80,9 @@ export function PosBilling() {
         </div>
       </div>
 
-      {view === 'create' ? <CreateBillPanel /> : <BillArchive />}
+      {view === 'quick' && <QuickBillPanel />}
+      {view === 'create' && <CreateBillPanel />}
+      {view === 'archive' && <BillArchive />}
     </div>
   );
 }
