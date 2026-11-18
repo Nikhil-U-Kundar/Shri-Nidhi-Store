@@ -1,27 +1,23 @@
 import { useMemo } from 'react';
-import { useCatalog, ALL_PRODUCTS } from '@/entities/product';
-import { CATEGORIES } from '@/shared/config/categories';
+import { ALL_PRODUCTS, buildCategoryList, useCatalog } from '@/entities/product';
 import { useNavigation } from '@/shared/lib/navigation';
 
-/** Horizontally scrolling category strip; keeps the shared category order and appends any new ones. */
+/** Desktop category strip. On phones the same categories live in the hamburger menu. */
 export function CategoryNav() {
   const { products, selectedCategory, setSelectedCategory } = useCatalog();
   const { setCustomerTab } = useNavigation();
 
-  const categories = useMemo(() => {
-    const fromProducts = Array.from(new Set(products.map((p) => p.category).filter(Boolean))).sort();
-    const merged = [ALL_PRODUCTS, ...fromProducts];
-    const ordered = CATEGORIES.filter((c) => merged.includes(c));
-    const extras = merged.filter((c) => !ordered.includes(c));
-    return [...ordered, ...extras];
-  }, [products]);
+  const categories = useMemo(() => buildCategoryList(products), [products]);
 
   const countFor = (category: string) =>
     category === ALL_PRODUCTS ? products.length : products.filter((p) => p.category === category).length;
 
   return (
-    <nav aria-label="Grocery categories" className="no-scrollbar overflow-x-auto border-b border-stone-200 bg-stone-100/70">
-      <ul className="mx-auto flex max-w-7xl items-center gap-1.5 px-4 py-2 text-xs font-semibold whitespace-nowrap sm:gap-2 sm:px-6 lg:px-8">
+    <nav
+      aria-label="Grocery categories"
+      className="no-scrollbar hidden overflow-x-auto border-b border-stone-200 bg-stone-100/70 md:block"
+    >
+      <ul className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 text-xs font-semibold whitespace-nowrap sm:px-6 lg:px-8">
         {categories.map((cat) => {
           const isActive = selectedCategory === cat;
           return (

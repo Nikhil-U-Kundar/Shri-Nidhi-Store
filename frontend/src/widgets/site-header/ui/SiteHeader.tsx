@@ -1,9 +1,12 @@
-import { Clock, MapPin, ShoppingBag, ShoppingBasket, Sparkles, Wallet } from 'lucide-react';
+import { useState } from 'react';
+import { Clock, Menu, MapPin, ShoppingBag, ShoppingBasket, Sparkles, Wallet, X } from 'lucide-react';
 import { useCart } from '@/entities/cart';
+import { ALL_PRODUCTS, useCatalog } from '@/entities/product';
 import { useAuth } from '@/features/auth';
 import { ProductSearchBox } from '@/features/product-search';
 import { DELIVERY, STORE } from '@/shared/config/store';
 import { useNavigation } from '@/shared/lib/navigation';
+import { MobileMenu } from './MobileMenu';
 import { UserMenu } from './UserMenu';
 
 /** Top notice strip, brand, search, and primary actions (deals, khata, account, cart). */
@@ -11,6 +14,16 @@ export function SiteHeader() {
   const { totals } = useCart();
   const { isLoggedIn, user } = useAuth();
   const { customerTab, setCustomerTab, setAccountSubTab, setCartOpen } = useNavigation();
+  const [isMenuOpen, setMenuOpen] = useState(false);
+  const { setSelectedCategory, setSearchQuery } = useCatalog();
+
+  /** Logo click: back to the full storefront, with no category or search filter, at the top of the page. */
+  const goHome = () => {
+    setSelectedCategory(ALL_PRODUCTS);
+    setSearchQuery('');
+    setCustomerTab('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-stone-200 bg-white shadow-sm">
@@ -44,7 +57,17 @@ export function SiteHeader() {
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
-              onClick={() => setCustomerTab('home')}
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-200 text-stone-700 transition hover:bg-stone-100 md:hidden"
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+            <button
+              type="button"
+              onClick={goHome}
               className="group flex min-w-0 cursor-pointer items-center gap-2 text-left"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-700 text-white shadow-md shadow-emerald-700/25 transition group-hover:scale-105 sm:h-11 sm:w-11">
@@ -97,7 +120,9 @@ export function SiteHeader() {
               </button>
             )}
 
-            <UserMenu />
+            <div className="hidden md:block">
+              <UserMenu />
+            </div>
 
             <button
               type="button"
@@ -116,6 +141,8 @@ export function SiteHeader() {
             </button>
           </div>
         </div>
+
+        {isMenuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
       </div>
     </header>
   );
