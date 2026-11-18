@@ -21,11 +21,13 @@ const allowed_origins = [
   'http://localhost:5173',
   'https://shri-nidhi-store.vercel.app',
 ].filter(Boolean);
+// Local dev servers can start on any port (Vite moves to 5174 etc. when 5173 is busy).
+const LOCAL_DEV_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowed_origins.includes(origin)) {
+      if (!origin || allowed_origins.includes(origin) || LOCAL_DEV_ORIGIN.test(origin)) {
         callback(null, true);
         return;
       }
