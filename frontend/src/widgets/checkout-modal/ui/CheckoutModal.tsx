@@ -3,6 +3,7 @@ import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, Plus, ShieldCheck, X 
 import { useCart } from '@/entities/cart';
 import { useAuth } from '@/features/auth';
 import { NewAddressForm } from '@/features/address-book';
+import { SchedulePicker } from '@/features/schedule-picker';
 import { useNavigation } from '@/shared/lib/navigation';
 import { Modal } from '@/shared/ui/Modal';
 import { usePlaceOrder } from '../model/usePlaceOrder';
@@ -12,18 +13,13 @@ const STEPS = ['Contact', 'Address', 'Delivery', 'Payment'] as const;
 
 const DELIVERY_MODES = [
   {
-    mode: '⚡ Express Delivery (30-40 Mins)',
-    sub: 'Dispatched immediately by local store staff with insulated bag',
+    mode: 'Scheduled Home Delivery',
+    sub: 'Pre-book at least 24 hours ahead and pick a delivery time slot',
     badge: 'RECOMMENDED',
   },
   {
-    mode: 'Standard Evening Slot (6:00 PM – 8:30 PM)',
-    sub: 'Convenient evening delivery when you are back home from work',
-    badge: 'POPULAR',
-  },
-  {
     mode: 'Self Pickup from Shop Counter (Shop 12)',
-    sub: 'Kept packed and checked ready for you at the front counter',
+    sub: 'Collect your packed order at the front counter in your chosen slot',
     badge: '',
   },
 ] as const;
@@ -51,6 +47,9 @@ export function CheckoutModal() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showNewAddress, setShowNewAddress] = useState(false);
   const [deliveryMode, setDeliveryMode] = useState<string>(DELIVERY_MODES[0].mode);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleSlotId, setScheduleSlotId] = useState('');
+  const scheduleReady = Boolean(scheduleDate && scheduleSlotId);
   const [paymentMethod, setPaymentMethod] = useState<string>(UPI_METHOD);
   const [gateway, setGateway] = useState<GatewayRequest | null>(null);
 
@@ -65,6 +64,8 @@ export function CheckoutModal() {
     const request = {
       deliveryAddress: chosenAddress?.text || FALLBACK_ADDRESS,
       deliveryMode,
+      deliveryDate: scheduleDate,
+      deliveryTimeSlot: scheduleSlotId,
       paymentMethod,
       customerName: customerName || user.name,
       customerPhone: customerPhone || user.phone,
@@ -297,8 +298,8 @@ export function CheckoutModal() {
             {step === 3 && (
               <section className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-bold text-stone-900">Select Delivery Mode</h4>
-                  <p className="text-xs text-stone-500">Fast neighborhood delivery directly from Shop 12</p>
+                  <h4 className="text-sm font-bold text-stone-900">Schedule Your Delivery</h4>
+                  <p className="text-xs text-stone-500">Choose how you want to receive your order, then a date and time slot</p>
                 </div>
 
                 <div className="space-y-2.5">
@@ -326,12 +327,26 @@ export function CheckoutModal() {
                   ))}
                 </div>
 
+                <SchedulePicker
+                  date={scheduleDate}
+                  slotId={scheduleSlotId}
+                  onChange={({ date, slotId }) => {
+                    setScheduleDate(date);
+                    setScheduleSlotId(slotId);
+                  }}
+                />
+
                 <div className="flex gap-2 pt-2">
                   <button type="button" onClick={() => setStep(2)} className={BACK_BUTTON}>
                     <ArrowLeft className="h-3.5 w-3.5" />
                     <span>Back</span>
                   </button>
-                  <button type="button" onClick={() => setStep(4)} className={PRIMARY_BUTTON}>
+                  <button
+                    type="button"
+                    onClick={() => setStep(4)}
+                    disabled={!scheduleReady}
+                    className={`${PRIMARY_BUTTON} disabled:cursor-not-allowed disabled:bg-stone-300`}
+                    >
                     <span>Continue to Payment</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>

@@ -99,13 +99,13 @@ export function isSameDay(isoDate, ref = new Date()) {
   );
 }
 
-export async function getUserBalance(userId) {
-  const credits = await query(
+export async function getUserBalance(userId, run = query) {
+  const credits = await run(
     `SELECT COALESCE(SUM(amount), 0)::float AS total
      FROM users_balance_details WHERE user_id = $1`,
     [userId]
   );
-  const paid = await query(
+  const paid = await run(
     `SELECT COALESCE(SUM(amount), 0)::float AS total
      FROM user_paid_details WHERE user_id = $1`,
     [userId]
@@ -123,4 +123,23 @@ export function safeUser(row) {
   if (!row) return null;
   const { password, ...rest } = row;
   return rest;
+}
+
+/**
+ * Run `work` inside a single database transaction. `work` receives a client
+ * exposing `query(text, params)`; commit on success, roll back on any error.
+ */
+export async function withTransaction(work) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await work({ query: (text, params) => client.query(text, params) });
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
 }

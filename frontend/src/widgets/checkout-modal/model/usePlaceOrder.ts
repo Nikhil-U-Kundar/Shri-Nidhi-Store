@@ -12,6 +12,10 @@ import { useToast } from '@/shared/ui/toast';
 export interface OrderRequest {
   deliveryAddress: string;
   deliveryMode: string;
+  /** Pre-booked delivery date (YYYY-MM-DD, store time). */
+  deliveryDate: string;
+  /** Id of the delivery slot chosen from the schedule. */
+  deliveryTimeSlot: string;
   paymentMethod: string;
   customerName: string;
   customerPhone: string;
@@ -88,7 +92,7 @@ export function usePlaceOrder() {
         deliveryMode: request.deliveryMode,
         customerName: request.customerName,
         customerPhone: request.customerPhone,
-        estimatedDelivery: 'Within 25-35 minutes',
+        estimatedDelivery: `${request.deliveryDate} · scheduled slot`,
       };
 
       setProducts((prev) =>

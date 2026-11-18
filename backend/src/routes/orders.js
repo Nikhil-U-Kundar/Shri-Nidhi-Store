@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { query, getUserBalance } from '../db/store.js';
+import { query, getUserBalance, withTransaction } from '../db/store.js';
+import { resolveSchedule } from '../services/schedule.js';
 import { requireAuth, requireAdmin } from '../config/passport.js';
 
 const router = Router();
@@ -115,6 +116,8 @@ router.post('/orders', requireAuth, async (req, res) => {
       items = [],
       deliveryAddress = '',
       deliveryMode = 'Home Delivery',
+      deliveryDate,
+      deliveryTimeSlot,
       paymentMethod = 'Cash on Delivery',
       customerName,
       customerPhone,
@@ -130,125 +133,110 @@ router.post('/orders', requireAuth, async (req, res) => {
     if (!name || !phone) {
       return res.status(400).json({ message: 'Customer name and phone are required' });
     }
-
-    let subtotal = 0;
-    const lines = [];
-
-    for (const item of items) {
-      const qty = Math.max(1, Number(item.qty || item.quantity) || 1);
-      const productId = item.productId || item.id;
-      const productResult = await query(`SELECT * FROM products WHERE id = $1`, [productId]);
-      const product = productResult.rows[0];
-      if (!product || !product.is_visible) {
-        return res.status(400).json({ message: `Product unavailable: ${productId}` });
-      }
-      if (Number(product.stock_quantity) < qty) {
-        return res.status(400).json({
-          message: `Not enough stock for ${product.name} (available ${product.stock_quantity})`,
-        });
-      }
-      const unitPrice = Number(product.selling_price);
-      const lineTotal = unitPrice * qty;
-      subtotal += lineTotal;
-      lines.push({
-        product,
-        qty,
-        unitPrice,
-        unit: product.pack_label || item.unit || '',
-      });
+    if (!String(deliveryAddress).trim()) {
+      return res.status(400).json({ message: 'Delivery address is required' });
     }
 
-    subtotal = Math.round(subtotal * 100) / 100;
-    const deliveryFee = subtotal >= 499 || subtotal === 0 ? 0 : 40;
-    const total = Math.round((subtotal + deliveryFee) * 100) / 100;
+    const schedule = await resolveSchedule({ deliveryDate, slotId: deliveryTimeSlot });
+    if (!schedule.ok) return res.status(400).json({ message: schedule.message });
 
-    let paymentStatus = 'Pending Cash at Doorstep';
-    if (paymentMethod === 'Kirana Khata (Store Credit)' || paymentMethod === 'Kirana Khata') {
-      const bal = await getUserBalance(req.user.id);
-      const creditLimit = Number(req.user.khata_credit_limit) || 10000;
-      const available = Math.max(0, creditLimit - Math.max(0, bal.balanceDue));
-      if (available < total) {
-        return res.status(400).json({
-          message: `Insufficient Khata credit. Available ₹${available.toLocaleString('en-IN')}`,
-        });
+    const isKhata = paymentMethod === 'Kirana Khata (Store Credit)' || paymentMethod === 'Kirana Khata';
+    const isOnline = /UPI|Card|Online/.test(paymentMethod);
+    const paymentStatus = isKhata ? 'Settled via Ledger' : isOnline ? 'Paid Online via Gateway' : 'Pending Cash at Doorstep';
+    const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const placed = await withTransaction(async (tx) => {
+      // Lock every product row first so concurrent orders serialise on stock.
+      let subtotal = 0;
+      const lines = [];
+      for (const item of items) {
+        const qty = Math.max(1, Math.floor(Number(item.qty || item.quantity) || 1));
+        const productId = item.productId || item.id;
+        const { rows } = await tx.query(`SELECT * FROM products WHERE id = $1 FOR UPDATE`, [productId]);
+        const product = rows[0];
+        if (!product || !product.is_visible) {
+          return { error: 400, message: `Product unavailable: ${productId}` };
+        }
+        if (Number(product.stock_quantity) < qty) {
+          return {
+            error: 400,
+            message: `Not enough stock for ${product.name} (available ${product.stock_quantity})`,
+          };
+        }
+        const unitPrice = Number(product.selling_price);
+        subtotal += unitPrice * qty;
+        lines.push({ product, qty, unitPrice, unit: product.pack_label || item.unit || '' });
       }
-      paymentStatus = 'Settled via Ledger';
-    } else if (
-      paymentMethod.includes('UPI') ||
-      paymentMethod.includes('Card') ||
-      paymentMethod.includes('Online')
-    ) {
-      paymentStatus = 'Paid Online via Gateway';
-    }
 
-    const orderNumber = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
-    const orderInsert = await query(
-      `INSERT INTO orders (
-         order_number, user_id, customer_name, customer_phone, delivery_address,
-         delivery_mode, payment_method, payment_status, status, subtotal,
-         delivery_fee, total, estimated_delivery, notes
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'Order Placed',$9,$10,$11,$12,$13)
-       RETURNING *`,
-      [
-        orderNumber,
-        req.user.id,
-        name,
-        phone,
-        String(deliveryAddress).trim(),
-        String(deliveryMode).trim() || 'Home Delivery',
-        String(paymentMethod).trim(),
-        paymentStatus,
-        subtotal,
-        deliveryFee,
-        total,
-        'Within 25-35 minutes',
-        String(notes || '').trim(),
-      ]
-    );
-    const orderRow = orderInsert.rows[0];
+      subtotal = Math.round(subtotal * 100) / 100;
+      const settings = schedule.settings;
+      const threshold = Number(settings.free_delivery_threshold);
+      const deliveryFee = subtotal === 0 || subtotal >= threshold ? 0 : Number(settings.delivery_fee);
+      const total = Math.round((subtotal + deliveryFee) * 100) / 100;
 
-    for (const line of lines) {
-      await query(
-        `INSERT INTO order_items (order_id, product_id, name, qty, price, unit)
-         VALUES ($1,$2,$3,$4,$5,$6)`,
+      if (isKhata) {
+        // Lock the customer row so two concurrent khata orders cannot both spend the same credit.
+        await tx.query(`SELECT id FROM users WHERE id = $1 FOR UPDATE`, [req.user.id]);
+        const bal = await getUserBalance(req.user.id, tx.query);
+        const creditLimit = Number(req.user.khata_credit_limit) || 10000;
+        const available = Math.max(0, creditLimit - Math.max(0, bal.balanceDue));
+        if (available < total) {
+          return { error: 400, message: `Insufficient Khata credit. Available ₹${available.toLocaleString('en-IN')}` };
+        }
+      }
+
+      const orderInsert = await tx.query(
+        `INSERT INTO orders (
+           order_number, user_id, customer_name, customer_phone, delivery_address,
+           delivery_mode, payment_method, payment_status, status, subtotal,
+           delivery_fee, total, estimated_delivery, notes,
+           delivery_date, delivery_slot, is_preorder
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'Order Placed',$9,$10,$11,$12,$13,$14,$15,true)
+         RETURNING *`,
         [
-          orderRow.id,
-          line.product.id,
-          line.product.name,
-          line.qty,
-          line.unitPrice,
-          line.unit,
+          orderNumber, req.user.id, name, phone, String(deliveryAddress).trim(),
+          String(deliveryMode).trim() || 'Scheduled Home Delivery', String(paymentMethod).trim(),
+          paymentStatus, subtotal, deliveryFee, total,
+          `${schedule.date} · ${schedule.slot.label}`, String(notes || '').trim(),
+          schedule.date, schedule.slot.label,
         ]
       );
+      const orderRow = orderInsert.rows[0];
 
-      const nextStock = Number(line.product.stock_quantity) - line.qty;
-      await query(
-        `UPDATE products SET stock_quantity = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
-        [nextStock, line.product.id]
-      );
-      await query(
-        `INSERT INTO stock_logs (product_id, change_amount, reason, note, created_by)
-         VALUES ($1, $2, 'sale', $3, $4)`,
-        [line.product.id, -line.qty, `Online order ${orderNumber}`, req.user.id]
-      );
-    }
+      for (const line of lines) {
+        await tx.query(
+          `INSERT INTO order_items (order_id, product_id, name, qty, price, unit)
+           VALUES ($1,$2,$3,$4,$5,$6)`,
+          [orderRow.id, line.product.id, line.product.name, line.qty, line.unitPrice, line.unit]
+        );
+        await tx.query(
+          `UPDATE products SET stock_quantity = stock_quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`,
+          [line.qty, line.product.id]
+        );
+        await tx.query(
+          `INSERT INTO stock_logs (product_id, change_amount, reason, note, created_by)
+           VALUES ($1, $2, 'sale', $3, $4)`,
+          [line.product.id, -line.qty, `Online order ${orderNumber}`, req.user.id]
+        );
+      }
 
-    if (paymentMethod === 'Kirana Khata (Store Credit)' || paymentMethod === 'Kirana Khata') {
-      const groceryLabel = lines
-        .map((l) => `${l.product.name} x${l.qty}`)
-        .join(', ')
-        .slice(0, 250);
-      await query(
-        `INSERT INTO users_balance_details (user_id, grocery_item, amount, date, note, payment_mode)
-         VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4, 'khata')`,
-        [req.user.id, groceryLabel || 'Store order', total, `Order ${orderNumber}`]
-      );
-    }
+      if (isKhata) {
+        const groceryLabel = lines.map((l) => `${l.product.name} x${l.qty}`).join(', ').slice(0, 250);
+        await tx.query(
+          `INSERT INTO users_balance_details (user_id, grocery_item, amount, date, note, payment_mode)
+           VALUES ($1, $2, $3, CURRENT_TIMESTAMP, $4, 'khata')`,
+          [req.user.id, groceryLabel || 'Store order', total, `Order ${orderNumber}`]
+        );
+      }
 
-    await query(`DELETE FROM cart_items WHERE user_id = $1`, [req.user.id]);
+      await tx.query(`DELETE FROM cart_items WHERE user_id = $1`, [req.user.id]);
+      return { orderRow };
+    });
 
-    const savedItems = await loadOrderItems(orderRow.id);
-    res.status(201).json({ order: mapOrder(orderRow, savedItems) });
+    if (placed.error) return res.status(placed.error).json({ message: placed.message });
+
+    const savedItems = await loadOrderItems(placed.orderRow.id);
+    res.status(201).json({ order: mapOrder(placed.orderRow, savedItems) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

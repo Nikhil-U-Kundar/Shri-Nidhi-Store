@@ -4,6 +4,8 @@ import type { Order, OrderStatus } from '../model/types';
 export interface NewOrderRequest {
   deliveryAddress: string;
   deliveryMode: string;
+  deliveryDate: string;
+  deliveryTimeSlot: string;
   paymentMethod: string;
   customerName: string;
   customerPhone: string;
