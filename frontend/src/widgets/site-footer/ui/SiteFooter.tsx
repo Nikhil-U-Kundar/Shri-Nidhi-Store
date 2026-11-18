@@ -1,4 +1,4 @@
-import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
+import { Clock, Facebook, Instagram, MapPin, Phone } from 'lucide-react';
 import { useCatalog } from '@/entities/product';
 import { STORE, DELIVERY } from '@/shared/config/store';
 import { scrollToCatalog } from '@/shared/lib/scroll';
@@ -87,10 +87,6 @@ export function SiteFooter() {
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 shrink-0 text-emerald-500" />
               <a href={`tel:${STORE.phoneTel}`} className="hover:text-white">{STORE.phoneDisplay}</a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 shrink-0 text-emerald-500" />
-              <span className="break-all">{STORE.email}</span>
             </li>
             <li className="flex items-center gap-2">
               <Clock className="h-4 w-4 shrink-0 text-emerald-500" />
