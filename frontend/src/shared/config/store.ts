@@ -7,7 +7,6 @@ export const STORE = {
   address: 'Belapu, industrial Area, Belapu - 574116',
   /** Opening hours, shown in the header and footer. */
   hours: '5:30 AM – 11:00 PM',
-  fssai: '10012031000085',
   pincode: '574116',
   /** Short address printed on bills and receipts. */
   billAddress: 'Belapu, industrial Area',

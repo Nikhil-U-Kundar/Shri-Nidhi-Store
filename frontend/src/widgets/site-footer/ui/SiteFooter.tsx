@@ -73,7 +73,6 @@ export function SiteFooter() {
             <li>Fast 30-Min Express Dispatch</li>
             <li>Kirana Khata: 0% Interest for 30 Days</li>
             <li>Same-Day Replacement on Unopened Packs</li>
-            <li>FSSAI Certified Sourcing: {STORE.fssai}</li>
           </ul>
         </div>
 
