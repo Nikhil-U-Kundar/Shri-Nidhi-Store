@@ -3,6 +3,8 @@ import type { Address, KhataTransaction } from '../model/types';
 
 /** Customer or owner record as returned by the auth and profile endpoints. */
 export interface ApiUser {
+  id?: string | null;
+  balanceDue?: number | string | null;
   name?: string | null;
   phone?: string | null;
   email?: string | null;
@@ -31,10 +33,4 @@ export const userApi = {
     return apiRequest(`/profile/addresses/${id}`, { method: 'DELETE' });
   },
 
-  recordKhataPayment(amount: number, note: string): Promise<unknown> {
-    return apiRequest('/profile/khata/repay', {
-      method: 'POST',
-      body: JSON.stringify({ amount, note }),
-    });
-  },
 };

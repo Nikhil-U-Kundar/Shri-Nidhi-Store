@@ -19,6 +19,7 @@ export interface KhataTransaction {
 }
 
 export interface UserProfile {
+  id: string;
   name: string;
   phone: string;
   email: string;
@@ -26,10 +27,14 @@ export interface UserProfile {
   khataBalance: number;
   khataCreditLimit: number;
   khataLedger: KhataTransaction[];
+  /** Amount the customer currently owes the store (credits minus payments). */
+  balanceDue: number;
 }
 
 /** Profile used while nobody is signed in. */
 export const GUEST_PROFILE: UserProfile = {
+  id: '',
+  balanceDue: 0,
   name: 'Guest',
   phone: '',
   email: '',

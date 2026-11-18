@@ -17,7 +17,7 @@ const ITEM_CLASS =
  * Holds the storefront pages, account actions and the category list.
  */
 export function MobileMenu({ onClose }: MobileMenuProps) {
-  const { isLoggedIn, logout, setLoginOpen } = useAuth();
+  const { isLoggedIn, user, logout, setLoginOpen } = useAuth();
   const { setCustomerTab, setAccountSubTab } = useNavigation();
   const { products, selectedCategory, setSelectedCategory } = useCatalog();
   const categories = buildCategoryList(products);
@@ -91,6 +91,20 @@ export function MobileMenu({ onClose }: MobileMenuProps) {
 
           {isLoggedIn ? (
             <>
+              <button
+                type="button"
+                onClick={() => openAccount('khata')}
+                className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl bg-emerald-900 px-4 py-3 text-left text-white shadow-md transition hover:bg-emerald-800"
+              >
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <Wallet className="h-5 w-5 shrink-0 text-emerald-300" />
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-black tracking-wider text-emerald-300 uppercase">Balance due</span>
+                    <span className="block text-[11px] text-emerald-100">Kirana Khata · view & pay</span>
+                  </span>
+                </span>
+                <span className="shrink-0 text-lg font-black tabular-nums">₹{user.balanceDue.toLocaleString('en-IN')}</span>
+              </button>
               <button type="button" onClick={() => openAccount('orders')} className={ITEM_CLASS}>
                 <Package className="h-4 w-4 text-stone-400" />
                 <span>My Orders</span>

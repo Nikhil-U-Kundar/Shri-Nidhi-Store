@@ -1,7 +1,7 @@
 import { getToken } from './session';
 
 const REQUEST_TIMEOUT_MS = 25_000;
-const API_BASE = import.meta.env.VITE_API_URL || '';
+export const API_BASE = import.meta.env.VITE_API_URL || '';
 
 /** JSON request helper for the Sri Nidhi API. Throws an Error with a user-facing message on failure. */
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {

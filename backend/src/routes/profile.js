@@ -164,36 +164,6 @@ router.delete('/profile/addresses/:id', requireAuth, async (req, res) => {
   }
 });
 
-/** Customer or admin records a khata repayment (payment against dues). */
-router.post('/profile/khata/repay', requireAuth, async (req, res) => {
-  try {
-    const amount = Number(req.body?.amount);
-    const note = String(req.body?.note || 'Cash Payment recorded at Shop Counter').trim();
-    let userId = req.user.id;
-
-    if (req.user.role === 'admin' && req.body?.userId) {
-      userId = req.body.userId;
-    } else if (req.user.role !== 'customer') {
-      return res.status(403).json({ message: 'Only customers can repay their own khata' });
-    }
-
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return res.status(400).json({ message: 'Valid amount required' });
-    }
-
-    await query(
-      `INSERT INTO user_paid_details (user_id, amount, date, note, payment_mode)
-       VALUES ($1, $2, NOW(), $3, $4)`,
-      [userId, amount, note, String(req.body?.paymentMode || 'cash')]
-    );
-
-    const bal = await getUserBalance(userId);
-    res.status(201).json({ ok: true, balance: bal });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
 router.get('/admin/customers/lookup', requireAuth, requireAdmin, async (req, res) => {
   try {
     const phone = String(req.query.phone || '').replace(/\D/g, '').slice(-10);

@@ -46,7 +46,7 @@ export function AccountPanel() {
   const links: SectionLink[] = [
     { id: 'profile', label: 'Profile Details', icon: User },
     { id: 'orders', label: 'My Orders', icon: Package, badge: String(orders.length) },
-    { id: 'khata', label: 'Kirana Khata Credit', icon: Wallet, badge: `₹${user.khataBalance}`, tone: 'khata' },
+    { id: 'khata', label: 'Kirana Khata', icon: Wallet, badge: `₹${user.balanceDue}`, tone: 'khata' },
     { id: 'addresses', label: 'Saved Addresses', icon: MapPin },
   ];
 

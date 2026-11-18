@@ -6,6 +6,8 @@ const DEFAULT_KHATA_LIMIT = 10000;
 /** Convert the API user record into the storefront's profile shape. */
 export function toUserProfile(u: ApiUser): UserProfile {
   return {
+    id: u.id || '',
+    balanceDue: Number(u.balanceDue) || 0,
     name: u.name || '',
     phone: u.phone || '',
     email: u.email || '',

@@ -8,6 +8,7 @@ import {
   isSameDay,
 } from '../db/store.js';
 import { requireAuth, requireAdmin } from '../config/passport.js';
+import { storeDate } from '../services/schedule.js';
 
 const router = Router();
 
@@ -289,12 +290,30 @@ router.get('/customers/:id/passbook', requireAuth, async (req, res) => {
   }
 });
 
+/**
+ * Optional admin-chosen entry date (YYYY-MM-DD, store time). Entries are stamped at noon IST
+ * so the calendar day is stable; future dates are refused. Absent date means "now".
+ */
+function entryDate(value) {
+  if (value === undefined || value === null || value === '') return { ok: true, at: null };
+  const day = String(value);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return { ok: false, message: 'Date must be YYYY-MM-DD' };
+  const instant = new Date(`${day}T12:00:00+05:30`);
+  if (Number.isNaN(instant.getTime()) || storeDate(instant) !== day) {
+    return { ok: false, message: 'Enter a valid date' };
+  }
+  if (day > storeDate(new Date())) return { ok: false, message: 'Entry date cannot be in the future' };
+  return { ok: true, at: instant.toISOString() };
+}
+
 router.post('/transactions/credit', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { userId, amount, groceryItem, note, paymentMode = 'credit' } = req.body;
     if (!userId || !amount || Number(amount) <= 0) {
       return res.status(400).json({ message: 'Valid userId and amount required' });
     }
+    const when = entryDate(req.body.date);
+    if (!when.ok) return res.status(400).json({ message: when.message });
 
     const user = (
       await query(`SELECT * FROM users WHERE id = $1 AND role = 'customer' LIMIT 1`, [
@@ -307,7 +326,7 @@ router.post('/transactions/credit', requireAuth, requireAdmin, async (req, res) 
       await query(
         `INSERT INTO users_balance_details
          (user_id, grocery_item, amount, date, note, payment_mode)
-         VALUES ($1, $2, $3, NOW(), $4, $5)
+         VALUES ($1, $2, $3, COALESCE($6::timestamptz, NOW()), $4, $5)
          RETURNING *`,
         [
           userId,
@@ -315,6 +334,7 @@ router.post('/transactions/credit', requireAuth, requireAdmin, async (req, res) 
           Number(amount),
           note || 'Give Credit',
           paymentMode,
+          when.at,
         ]
       )
     ).rows[0];
@@ -332,6 +352,8 @@ router.post('/transactions/payment', requireAuth, requireAdmin, async (req, res)
     if (!userId || !amount || Number(amount) <= 0) {
       return res.status(400).json({ message: 'Valid userId and amount required' });
     }
+    const when = entryDate(req.body.date);
+    if (!when.ok) return res.status(400).json({ message: when.message });
 
     const user = (
       await query(`SELECT * FROM users WHERE id = $1 AND role = 'customer' LIMIT 1`, [
@@ -344,9 +366,9 @@ router.post('/transactions/payment', requireAuth, requireAdmin, async (req, res)
       await query(
         `INSERT INTO user_paid_details
          (user_id, amount, date, note, payment_mode)
-         VALUES ($1, $2, NOW(), $3, $4)
+         VALUES ($1, $2, COALESCE($5::timestamptz, NOW()), $3, $4)
          RETURNING *`,
-        [userId, Number(amount), note || 'Payment received', paymentMode]
+        [userId, Number(amount), note || 'Payment received', paymentMode, when.at]
       )
     ).rows[0];
 

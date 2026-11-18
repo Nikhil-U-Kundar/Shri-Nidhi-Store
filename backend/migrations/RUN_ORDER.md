@@ -13,3 +13,5 @@ Post-check:
     SELECT label, start_time, end_time FROM delivery_slots ORDER BY sort_order;
 
 3. `003_product_fields_and_images.sql` — adds the product columns the catalog API writes (`description`, `featured`, `is_offer`, `mfg`, `origin`, `expiry`, `fssai_number`) and the `product_images` table for uploads. Run after 001 and 002.
+
+4. `004_payment_qr_and_ledger_indexes.sql` — adds the `store_images` table (holds the payment QR) and per-customer ledger indexes. Run after 003.

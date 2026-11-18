@@ -54,7 +54,7 @@ export function SiteHeader() {
 
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5 py-2.5 sm:py-3 md:min-h-20">
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center gap-3">
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
@@ -68,7 +68,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={goHome}
-              className="group flex min-w-0 cursor-pointer items-center gap-2 text-left"
+              className="group flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-700 text-white shadow-md shadow-emerald-700/25 transition group-hover:scale-105 sm:h-11 sm:w-11">
                 <ShoppingBasket className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -88,7 +88,7 @@ export function SiteHeader() {
             <ProductSearchBox />
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-3">
             <button
               type="button"
               onClick={() => setCustomerTab('deals')}
@@ -108,13 +108,13 @@ export function SiteHeader() {
                   setAccountSubTab('khata');
                 }}
                 className="hidden cursor-pointer items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-900 transition hover:bg-emerald-100 lg:flex"
-                title="Your Kirana Khata / Monthly Store Credit"
+                title="Your khata balance: what you owe the store"
               >
                 <Wallet className="h-4 w-4 shrink-0 text-emerald-700" />
                 <span className="text-left">
-                  <span className="block text-[9px] leading-none font-black uppercase text-emerald-700">Khata Credit</span>
+                  <span className="block text-[9px] leading-none font-black uppercase text-emerald-700">Balance due</span>
                   <span className="text-sm leading-tight font-black text-emerald-950 tabular-nums">
-                    ₹{user.khataBalance.toLocaleString('en-IN')}
+                    ₹{user.balanceDue.toLocaleString('en-IN')}
                   </span>
                 </span>
               </button>
