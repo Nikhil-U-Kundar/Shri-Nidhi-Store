@@ -250,7 +250,8 @@ router.get('/customers/:id/passbook', requireAuth, async (req, res) => {
           : r.payment_mode === 'bank'
             ? 'Bank Transfer Received'
             : 'Cash Paid at Counter',
-      description: r.note || 'Payment received',
+      description: r.items || r.note || 'Payment received',
+      items: r.items || '',
       amount: Number(r.amount),
       date: r.date,
       payment_mode: r.payment_mode,
@@ -349,6 +350,7 @@ router.post('/transactions/credit', requireAuth, requireAdmin, async (req, res) 
 router.post('/transactions/payment', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { userId, amount, note, paymentMode = 'cash' } = req.body;
+    const items = String(req.body.items || '').trim().slice(0, 500);
     if (!userId || !amount || Number(amount) <= 0) {
       return res.status(400).json({ message: 'Valid userId and amount required' });
     }
@@ -365,10 +367,10 @@ router.post('/transactions/payment', requireAuth, requireAdmin, async (req, res)
     const entry = (
       await query(
         `INSERT INTO user_paid_details
-         (user_id, amount, date, note, payment_mode)
-         VALUES ($1, $2, COALESCE($5::timestamptz, NOW()), $3, $4)
+         (user_id, amount, date, note, payment_mode, items)
+         VALUES ($1, $2, COALESCE($5::timestamptz, NOW()), $3, $4, $6)
          RETURNING *`,
-        [userId, Number(amount), note || 'Payment received', paymentMode, when.at]
+        [userId, Number(amount), note || 'Payment received', paymentMode, when.at, items]
       )
     ).rows[0];
 

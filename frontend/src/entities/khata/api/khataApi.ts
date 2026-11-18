@@ -10,6 +10,8 @@ export interface KhataEntry {
   date: string;
   balanceAfter: number;
   paymentMode?: string;
+  /** Items a payment covers (payments only). */
+  items?: string;
   note?: string;
 }
 
@@ -44,6 +46,8 @@ export interface NewKhataPayment {
   date: string;
   amount: number;
   paymentMode: 'cash' | 'upi' | 'bank';
+  /** Which items this payment covers, e.g. "Tea powder, Milk". */
+  items: string;
   note: string;
 }
 
@@ -79,6 +83,7 @@ export const khataApi = {
         date: input.date,
         amount: input.amount,
         paymentMode: input.paymentMode,
+        items: input.items,
         note: input.note,
       }),
     });

@@ -39,6 +39,7 @@ export function KhataTab() {
   const [payAmount, setPayAmount] = useState('');
   const [payMode, setPayMode] = useState<'cash' | 'upi' | 'bank'>('cash');
   const [payNote, setPayNote] = useState('');
+  const [payItems, setPayItems] = useState('');
 
   const loadCustomers = useCallback(async () => {
     setLoadingCustomers(true);
@@ -103,10 +104,12 @@ export function KhataTab() {
         date: payDate,
         amount,
         paymentMode: payMode,
+        items: payItems.trim(),
         note: payNote.trim() || 'Payment received',
       });
       addToast(`Recorded ${formatINR(amount)} payment`, 'success');
       setPayAmount('');
+      setPayItems('');
       setPayNote('');
       await refreshAfterChange();
     } catch (err) {
@@ -244,6 +247,10 @@ export function KhataTab() {
                       <option value="upi">UPI</option>
                       <option value="bank">Bank transfer</option>
                     </select>
+                  </div>
+                  <div>
+                    <label htmlFor="pay-items" className={LABEL}>Items this payment covers</label>
+                    <input id="pay-items" type="text" placeholder="e.g. Tea powder 250g, Milk 500ml" value={payItems} onChange={(e) => setPayItems(e.target.value)} className={INPUT} />
                   </div>
                   <div>
                     <label htmlFor="pay-note" className={LABEL}>Note (optional)</label>

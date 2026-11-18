@@ -15,3 +15,5 @@ Post-check:
 3. `003_product_fields_and_images.sql` — adds the product columns the catalog API writes (`description`, `featured`, `is_offer`, `mfg`, `origin`, `expiry`, `fssai_number`) and the `product_images` table for uploads. Run after 001 and 002.
 
 4. `004_payment_qr_and_ledger_indexes.sql` — adds the `store_images` table (holds the payment QR) and per-customer ledger indexes. Run after 003.
+
+5. `005_payment_items.sql` — adds the `items` column to payments (which items a payment covers). Run after 004.
