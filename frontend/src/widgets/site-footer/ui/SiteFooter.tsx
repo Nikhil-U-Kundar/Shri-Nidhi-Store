@@ -30,7 +30,7 @@ export function SiteFooter() {
             <span className="text-base font-black tracking-tight break-words text-white sm:text-lg">{STORE.legalName}</span>
           </div>
           <p className="max-w-sm leading-relaxed text-stone-400">
-            Your trusted neighborhood grocery partner in Gurugram Sector 14. Delivering freshly ground stone chakki atta, pure
+            Your trusted neighborhood grocery partner in Belapu, Haryana. Delivering freshly ground stone chakki atta, pure
             cooking oils, dals, dairy, and home essentials with traditional store warmth and modern speed.
           </p>
           <div className="flex items-center gap-3 pt-1 text-stone-400">
@@ -94,7 +94,7 @@ export function SiteFooter() {
             </li>
             <li className="flex items-center gap-2">
               <Clock className="h-4 w-4 shrink-0 text-emerald-500" />
-              <span>Daily: 7:00 AM – 10:00 PM</span>
+              <span>Daily: {STORE.hours}</span>
             </li>
           </ul>
         </div>

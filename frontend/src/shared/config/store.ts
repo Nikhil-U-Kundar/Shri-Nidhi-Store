@@ -5,7 +5,9 @@ export const STORE = {
   phoneDisplay: '8970128830',
   phoneTel: '+918970128830',
   email: 'support@srinidhistore.local',
-  address: 'Shop 12, Main Market, Belapu, industrial Area, Haryana - 122001',
+  address: 'Belapu, industrial Area, Haryana - 122001',
+  /** Opening hours, shown in the header and footer. */
+  hours: '5:30 AM – 11:00 PM',
   fssai: '10012031000085',
   pincode: '122001',
   /** Short address printed on bills and receipts. */
