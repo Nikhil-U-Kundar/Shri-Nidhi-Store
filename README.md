@@ -36,23 +36,4 @@ npm run seed
 npm run dev
 ```
 
-API: http://localhost:5000
 
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-App: http://localhost:5173
-
-### Demo logins (after seed)
-
-| Role | Login | Password |
-|------|-------|----------|
-| Customer | `9876543210` | `password123` |
-| Admin | `admin@shreenidhi.store` (or `DEFAULT_ADMIN_EMAIL`) | `password123` (or `DEFAULT_ADMIN_PASSWORD`) |
-
-Use the top bar **Simulate Login** / **Switch to Admin Panel** to jump between modes.
