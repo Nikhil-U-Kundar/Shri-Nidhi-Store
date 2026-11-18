@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { landingImages } from '@/shared/config/images';
 import { Modal } from '@/shared/ui/Modal';
-import type { Product } from '@/entities/product';
+import { ACCEPTED_IMAGE_TYPES, type Product } from '@/entities/product';
 import { useProductActions } from '../model/useProductActions';
 
 const CATEGORY_OPTIONS = [
@@ -30,6 +30,7 @@ export function AddProductDialog({ onClose }: AddProductDialogProps) {
   const [mrp, setMrp] = useState('180');
   const [salePrice, setSalePrice] = useState('155');
   const [stock, setStock] = useState('25');
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -59,7 +60,7 @@ export function AddProductDialog({ onClose }: AddProductDialogProps) {
       expiry: '12 Months',
     };
 
-    void addProduct(product);
+    void addProduct(product, imageFile);
     onClose();
   };
 
@@ -114,6 +115,17 @@ export function AddProductDialog({ onClose }: AddProductDialogProps) {
           <div>
             <label htmlFor="product-stock" className={LABEL_CLASS}>Initial Stock (Units)</label>
             <input id="product-stock" type="number" value={stock} onChange={(e) => setStock(e.target.value)} className={INPUT_CLASS} />
+          </div>
+
+          <div>
+            <label htmlFor="product-photo" className={LABEL_CLASS}>Product photo (optional, JPEG / PNG / WebP, max 3 MB)</label>
+            <input
+              id="product-photo"
+              type="file"
+              accept={ACCEPTED_IMAGE_TYPES}
+              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+              className="w-full rounded-xl border border-stone-200 p-2 text-xs file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:font-semibold file:text-emerald-800"
+            />
           </div>
 
           <div className="flex gap-2 pt-3">

@@ -11,3 +11,5 @@ Pre-check (should return 0 rows, else fix stock first):
 Post-check:
     SELECT key, value FROM store_settings ORDER BY key;
     SELECT label, start_time, end_time FROM delivery_slots ORDER BY sort_order;
+
+3. `003_product_fields_and_images.sql` — adds the product columns the catalog API writes (`description`, `featured`, `is_offer`, `mfg`, `origin`, `expiry`, `fssai_number`) and the `product_images` table for uploads. Run after 001 and 002.

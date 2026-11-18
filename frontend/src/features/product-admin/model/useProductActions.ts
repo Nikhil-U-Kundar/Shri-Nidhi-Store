@@ -15,10 +15,14 @@ export function useProductActions() {
   const useRemote = isAdmin && !usingMockCatalog;
 
   const addProduct = useCallback(
-    async (product: Product) => {
+    async (product: Product, imageFile?: File | null) => {
       if (useRemote) {
         try {
-          const created = await productApi.create(product);
+          let created = await productApi.create(product);
+          if (imageFile) {
+            const imageUrl = await productApi.uploadImage(created.id, imageFile);
+            created = { ...created, image: imageUrl };
+          }
           setProducts((prev) => [created, ...prev]);
           addToast(`Added "${product.name}" to store catalog`, 'success');
         } catch (err) {
@@ -26,8 +30,29 @@ export function useProductActions() {
         }
         return;
       }
-      setProducts((prev) => [product, ...prev]);
+      const image = imageFile ? URL.createObjectURL(imageFile) : product.image;
+      setProducts((prev) => [{ ...product, image }, ...prev]);
       addToast(`Added "${product.name}" to store catalog`, 'success');
+    },
+    [useRemote, setProducts, addToast]
+  );
+
+  /** Replace an existing product's photo. */
+  const uploadImage = useCallback(
+    async (id: string, file: File) => {
+      if (useRemote) {
+        try {
+          const imageUrl = await productApi.uploadImage(id, file);
+          setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, image: imageUrl } : p)));
+          addToast('Product photo updated', 'success');
+        } catch (err) {
+          addToast(errorMessage(err, 'Could not upload photo'), 'error');
+        }
+        return;
+      }
+      const image = URL.createObjectURL(file);
+      setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, image } : p)));
+      addToast('Product photo updated', 'success');
     },
     [useRemote, setProducts, addToast]
   );
@@ -68,5 +93,5 @@ export function useProductActions() {
     [useRemote, setProducts, addToast]
   );
 
-  return { addProduct, updateProduct, updateStock, deleteProduct };
+  return { addProduct, uploadImage, updateProduct, updateStock, deleteProduct };
 }

@@ -1,13 +1,25 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useCatalog } from '@/entities/product';
+import { ACCEPTED_IMAGE_TYPES, useCatalog } from '@/entities/product';
 import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
 import { AddProductDialog, useProductActions } from '@/features/product-admin';
 
 export function CatalogTab() {
   const { products } = useCatalog();
-  const { updateStock, deleteProduct } = useProductActions();
+  const { updateStock, deleteProduct, uploadImage } = useProductActions();
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const [photoTargetId, setPhotoTargetId] = useState<string | null>(null);
+
+  const choosePhoto = (productId: string) => {
+    setPhotoTargetId(productId);
+    photoInputRef.current?.click();
+  };
+
+  const handlePhotoPicked = (file: File | undefined) => {
+    if (file && photoTargetId) void uploadImage(photoTargetId, file);
+    setPhotoTargetId(null);
+  };
 
   return (
     <div className="space-y-4">
@@ -67,6 +79,13 @@ export function CatalogTab() {
                 <td className="p-3.5 text-right whitespace-nowrap">
                   <button
                     type="button"
+                    onClick={() => choosePhoto(prod.id)}
+                    className="mr-3 cursor-pointer font-bold text-stone-600 hover:text-emerald-700"
+                  >
+                    Photo
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => {
                       const val = window.prompt(`Update shelf stock for ${prod.name}:`, String(prod.stock));
                       if (val !== null) void updateStock(prod.id, parseInt(val, 10) || 0);
@@ -90,6 +109,19 @@ export function CatalogTab() {
           </tbody>
         </table>
       </div>
+
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept={ACCEPTED_IMAGE_TYPES}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+        onChange={(e) => {
+          handlePhotoPicked(e.target.files?.[0]);
+          e.target.value = '';
+        }}
+      />
 
       {showAddProduct && <AddProductDialog onClose={() => setShowAddProduct(false)} />}
     </div>

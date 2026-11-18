@@ -1,6 +1,6 @@
 import { apiRequest } from '@/shared/api/client';
 import type { Product } from '../model/types';
-import { mapApiProduct, toApiProductBody, toApiProductPatch, type ApiProduct } from '../lib/mapper';
+import { mapApiProduct, resolveImageUrl, toApiProductBody, toApiProductPatch, type ApiProduct } from '../lib/mapper';
 
 export const productApi = {
   async list(visibleOnly: boolean): Promise<Product[]> {
@@ -24,6 +24,16 @@ export const productApi = {
       body: JSON.stringify(toApiProductPatch(updates)),
     });
     return mapApiProduct(data.product);
+  },
+
+  /** Upload a product photo; returns the stored image URL (relative to the API). */
+  async uploadImage(id: string, file: File): Promise<string> {
+    const data = await apiRequest<{ imageUrl: string }>(`/admin/products/${id}/image`, {
+      method: 'POST',
+      headers: { 'Content-Type': file.type },
+      body: file,
+    });
+    return resolveImageUrl(data.imageUrl);
   },
 
   remove(id: string): Promise<unknown> {

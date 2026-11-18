@@ -30,6 +30,14 @@ export interface ApiProduct {
   fssaiNumber?: string | null;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+/** Uploaded photos come back as /api/... paths; make them absolute so they load from the deployed site. */
+export function resolveImageUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  return url.startsWith('/api/') ? `${API_BASE}${url}` : url;
+}
+
 /** Convert an API product into the storefront's Product shape. */
 export function mapApiProduct(p: ApiProduct): Product {
   const selling = Number(p.sellingPrice ?? p.discountPrice ?? 0);
@@ -55,7 +63,7 @@ export function mapApiProduct(p: ApiProduct): Product {
     reviewsCount: Number(p.reviewsCount ?? 0),
     featured: Boolean(p.featured),
     isOffer: Boolean(p.isOffer) || discount > 0,
-    image: p.imageUrl || p.image || fallbackProductImage,
+    image: resolveImageUrl(p.imageUrl || p.image) || fallbackProductImage,
     description: p.description || `${p.name} from Sri Nidhi Store.`,
     mfg: p.mfg || p.brand || '',
     origin: p.origin || 'India',
