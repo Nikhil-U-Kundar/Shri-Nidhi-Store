@@ -23,8 +23,7 @@ export function ReceiptModal() {
       <div id="printable-receipt" className="space-y-4 p-6 font-mono text-xs text-stone-900">
         <div className="space-y-1 border-b border-dashed border-stone-300 pb-4 text-center">
           <h3 className="text-base font-black uppercase tracking-wider">{STORE.legalName}</h3>
-          <p className="text-[11px] text-stone-600">Shop 12, Main Market, Belapu, industrial Area, Haryana</p>
-          <p className="text-[10px] text-stone-500">GSTIN: {STORE.gstin} · FSSAI: {STORE.fssai}</p>
+          <p className="text-[11px] text-stone-600">{STORE.billAddress}</p>
           <p className="text-[10px] text-stone-500">Ph: {STORE.phoneDisplay}</p>
         </div>
 

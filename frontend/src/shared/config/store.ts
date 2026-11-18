@@ -2,13 +2,14 @@
 export const STORE = {
   name: 'Sri Nidhi Store',
   legalName: 'SRI NIDHI STORE & GENERAL STORE',
-  phoneDisplay: '+91 98765 43210',
-  phoneTel: '+919876543210',
+  phoneDisplay: '8970128830',
+  phoneTel: '+918970128830',
   email: 'support@srinidhistore.local',
   address: 'Shop 12, Main Market, Belapu, industrial Area, Haryana - 122001',
-  gstin: '06AABCU9603R1ZM',
   fssai: '10012031000085',
   pincode: '122001',
+  /** Short address printed on bills and receipts. */
+  billAddress: 'Belapu, industrial Area',
 } as const;
 
 export const DELIVERY = {

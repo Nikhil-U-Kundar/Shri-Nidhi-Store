@@ -53,7 +53,8 @@ async function loadBillItems(billId) {
 
 router.get('/bills', requireAuth, requireAdmin, async (_req, res) => {
   try {
-    const result = await query(`SELECT * FROM bills ORDER BY created_at DESC LIMIT 200`);
+    // Every saved bill is listed; the archive is searched client-side.
+    const result = await query(`SELECT * FROM bills ORDER BY created_at DESC`);
     const bills = [];
     for (const row of result.rows) {
       const items = await loadBillItems(row.id);

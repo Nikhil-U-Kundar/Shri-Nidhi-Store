@@ -3,6 +3,7 @@ import { useBilling, type Bill } from '@/entities/bill';
 import { STORE } from '@/shared/config/store';
 import { Modal } from '@/shared/ui/Modal';
 import { useToast } from '@/shared/ui/toast';
+import { billPdfFilename, buildBillPdf } from '../lib/billPdf';
 
 const CASHIER_FALLBACK = 'Suresh Kumar';
 
@@ -10,7 +11,7 @@ function buildWhatsAppMessage(bill: Bill): string {
   const itemsList = bill.items.map((i) => `${i.name} (${i.unit}) x${i.qty} = ₹${i.total}`).join('\n');
   return [
     `*${STORE.legalName}*`,
-    'Shop 12, Main Market, Sector 14',
+    STORE.billAddress,
     `Ph: ${STORE.phoneDisplay}`,
     '-------------------------------',
     `*BILL NO:* ${bill.billNumber}`,
@@ -29,37 +30,6 @@ function buildWhatsAppMessage(bill: Bill): string {
   ].join('\n');
 }
 
-function buildTextReceipt(bill: Bill): string {
-  const itemsList = bill.items
-    .map((i) => `${i.name.padEnd(28)} ${i.qty.toString().padStart(2)} x ₹${i.price.toString().padStart(4)} = ₹${i.total.toString().padStart(5)}`)
-    .join('\n');
-  return `================================================
-          SRI NIDHI STORE & GENERAL STORE
-       Shop 12, Main Market, Belapu, industrial Area
-      GSTIN: ${STORE.gstin}  |  FSSAI: ${STORE.fssai}
-               Phone: ${STORE.phoneDisplay}
-================================================
-BILL NUMBER : ${bill.billNumber}
-DATE & TIME : ${bill.date} ${bill.time}
-CASHIER     : ${bill.cashierName || CASHIER_FALLBACK}
-CUSTOMER    : ${bill.customerName}
-MOBILE      : ${bill.customerPhone}
-PAYMENT     : ${bill.paymentMethod} [${bill.paymentStatus}]
-================================================
-ITEM DESCRIPTION               QTY   RATE      TOTAL
-------------------------------------------------
-${itemsList}
-------------------------------------------------
-Subtotal:                                  ₹${bill.subtotal}
-Discount:                                 -₹${bill.discount}
-------------------------------------------------
-GRAND TOTAL:                               ₹${bill.total}
-================================================
-      Thank you for shopping at Sri Nidhi Store!
-  Visit again for fresh grains & Mandi discounts!
-================================================`;
-}
-
 /** Cash-memo preview with print, WhatsApp and text-download actions. */
 export function TakeBillModal() {
   const { activeBill: bill, setActiveBill } = useBilling();
@@ -75,15 +45,9 @@ export function TakeBillModal() {
     addToast('Opening WhatsApp to send bill to customer', 'info');
   };
 
-  const downloadText = () => {
-    const blob = new Blob([buildTextReceipt(bill)], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Bill_${bill.billNumber}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-    addToast(`Bill ${bill.billNumber} downloaded as text file`, 'success');
+  const downloadPdf = () => {
+    buildBillPdf(bill).save(billPdfFilename(bill));
+    addToast(`Bill ${bill.billNumber} downloaded as PDF`, 'success');
   };
 
   return (
@@ -102,8 +66,7 @@ export function TakeBillModal() {
         <div id="printable-receipt" className="space-y-4">
           <div className="space-y-1 border-b border-dashed border-stone-300 pb-3 text-center">
             <h2 className="text-base font-black uppercase tracking-wider text-stone-900 sm:text-lg">{STORE.legalName}</h2>
-            <p className="text-[11px] text-stone-600">Shop 12, Main Market, Belapu, industrial Area, Haryana - 122001</p>
-            <p className="text-[10px] text-stone-500">GSTIN: {STORE.gstin} · FSSAI Lic: {STORE.fssai}</p>
+            <p className="text-[11px] text-stone-600">{STORE.billAddress}</p>
             <p className="text-[10px] text-stone-500">Phone: {STORE.phoneDisplay}</p>
             <div className="mt-1 inline-block rounded bg-stone-100 px-2 py-0.5 text-[10px] font-bold text-stone-700">
               RETAIL INVOICE / CASH MEMO
@@ -172,7 +135,7 @@ export function TakeBillModal() {
         <div className="grid grid-cols-3 gap-2">
           <ActionButton onClick={() => window.print()} title="Print thermal cash slip / bill" variant="primary" icon={<Printer className="h-4 w-4" />} label="Print" />
           <ActionButton onClick={shareOnWhatsApp} title="Send bill to customer on WhatsApp" variant="soft" icon={<Share2 className="h-4 w-4" />} label="WhatsApp" />
-          <ActionButton onClick={downloadText} title="Download text receipt copy" variant="muted" icon={<Download className="h-4 w-4" />} label="Download" />
+          <ActionButton onClick={downloadPdf} title="Download bill as PDF" variant="muted" icon={<Download className="h-4 w-4" />} label="Download PDF" />
         </div>
         <button type="button" onClick={close} className="w-full cursor-pointer rounded-lg bg-stone-100 py-1.5 text-xs font-semibold text-stone-600 hover:bg-stone-200">
           Close Cash Memo
