@@ -5,6 +5,7 @@ import { useCatalog } from '@/entities/product';
 import { useOrders } from '@/entities/order';
 import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
 import { SideDrawer } from '@/shared/ui/SideDrawer';
+import { BuildBadge } from '@/shared/ui/BuildBadge';
 import { PosBilling } from '@/widgets/pos-billing';
 import { OverviewTab } from './OverviewTab';
 import { OrdersTab } from './OrdersTab';
@@ -163,6 +164,7 @@ export function AdminConsole() {
         {tab === 'inventory' && <InventoryTab />}
         {tab === 'reports' && <ReportsTab />}
         {tab === 'billing' && <PosBilling />}
+        <BuildBadge className="pt-8" />
       </main>
     </div>
   );

@@ -2,6 +2,7 @@ import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { useCatalog } from '@/entities/product';
 import { STORE, DELIVERY } from '@/shared/config/store';
 import { scrollToCatalog } from '@/shared/lib/scroll';
+import { BuildBadge } from '@/shared/ui/BuildBadge';
 
 const FOOTER_CATEGORIES = [
   { label: 'Atta, Rice & Dal', category: 'Atta, Rice & Dal' },
@@ -107,6 +108,7 @@ export function SiteFooter() {
           <span className="font-medium text-emerald-400">Kirana Khata Credit Enabled</span>
         </div>
       </div>
+      <BuildBadge className="pt-4" />
     </footer>
   );
 }
