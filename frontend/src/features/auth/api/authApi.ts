@@ -7,10 +7,10 @@ export interface AuthResponse {
 }
 
 export const authApi = {
-  login(login: string, password: string, role: 'customer' | 'admin'): Promise<AuthResponse> {
+  login(login: string, password: string): Promise<AuthResponse> {
     return apiRequest<AuthResponse>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ login, password, role }),
+      body: JSON.stringify({ login, password }),
     });
   },
 

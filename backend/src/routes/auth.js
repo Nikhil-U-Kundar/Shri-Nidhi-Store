@@ -31,16 +31,7 @@ router.post('/login', (req, res, next) => {
       return res.status(401).json({ message: info?.message || 'Login failed' });
     }
 
-    const requestedRole = req.body.role || 'customer';
-    if (requestedRole === 'admin' && user.role !== 'admin') {
-      return res.status(403).json({ message: 'Not authorized as shop owner' });
-    }
-    if (requestedRole === 'customer' && user.role === 'admin') {
-      return res.status(403).json({
-        message: 'This is an admin account. Switch to Shop Owner to sign in.',
-      });
-    }
-
+    // One sign-in for everyone: the account's own role decides what it can open.
     const token = signToken(user);
     return res.json({
       token,

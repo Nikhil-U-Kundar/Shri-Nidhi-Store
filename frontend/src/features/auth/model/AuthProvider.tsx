@@ -14,7 +14,7 @@ interface AuthValue {
   user: UserProfile;
   patchUser: (update: (prev: UserProfile) => UserProfile) => void;
   refreshProfile: () => Promise<void>;
-  login: (loginId: string, password: string, role: Role) => Promise<void>;
+  login: (loginId: string, password: string) => Promise<void>;
   registerCustomer: (name: string, phone: string) => Promise<void>;
   logout: () => void;
   isLoginOpen: boolean;
@@ -69,8 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const login = useCallback(
-    async (loginId: string, password: string, requestedRole: Role) => {
-      const data = await authApi.login(loginId, password, requestedRole);
+    async (loginId: string, password: string) => {
+      const data = await authApi.login(loginId, password);
       await applySession(data);
       addToast(
         data.user.role === 'admin' ? 'Signed in as shop owner' : `Signed in as ${data.user.name}`,
