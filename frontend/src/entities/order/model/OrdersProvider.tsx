@@ -4,6 +4,7 @@ import { initialOrders } from './mock-data';
 import { orderApi } from '../api/orderApi';
 
 const DEFAULT_TRACKING_ORDER = 'ORD-9412';
+const ORDER_REFRESH_MS = 30_000;
 
 interface OrdersValue {
   orders: Order[];
@@ -40,11 +41,14 @@ export function OrdersProvider({ children, hasSession }: OrdersProviderProps) {
   }, []);
 
   useEffect(() => {
-    if (hasSession) {
-      void refreshOrders();
-    } else {
+    if (!hasSession) {
       setOrders(initialOrders);
+      return;
     }
+    void refreshOrders();
+    // Keep the list current: new customer orders appear without a page reload.
+    const timer = window.setInterval(() => void refreshOrders(), ORDER_REFRESH_MS);
+    return () => window.clearInterval(timer);
   }, [hasSession, refreshOrders]);
 
   const value = useMemo<OrdersValue>(
