@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, BookOpen, Boxes, FileText, LayoutDashboard, LogOut, Menu, Package } from 'lucide-react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useCatalog } from '@/entities/product';
 import { useOrders } from '@/entities/order';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
 import { SideDrawer } from '@/shared/ui/SideDrawer';
 import { BuildBadge } from '@/shared/ui/BuildBadge';
-import { PosBilling } from '@/widgets/pos-billing';
 import { OverviewTab } from './OverviewTab';
 import { OrdersTab } from './OrdersTab';
 import { CatalogTab } from './CatalogTab';
@@ -23,8 +22,13 @@ interface NavItem {
   badge?: { value: number; tone: 'amber' | 'red' };
 }
 
+interface AdminConsoleProps {
+  /** Counter billing screen, supplied by the page. */
+  billing: ReactNode;
+}
+
 /** Shop-owner console: a sidebar on desktop, and the same hamburger menu as the storefront on phones. */
-export function AdminConsole() {
+export function AdminConsole({ billing }: AdminConsoleProps) {
   const { user, logout } = useAuth();
   const { products } = useCatalog();
   const { orders } = useOrders();
@@ -163,7 +167,7 @@ export function AdminConsole() {
         {tab === 'khata' && <KhataTab />}
         {tab === 'inventory' && <InventoryTab />}
         {tab === 'reports' && <ReportsTab />}
-        {tab === 'billing' && <PosBilling />}
+        {tab === 'billing' && billing}
         <BuildBadge className="pt-8" />
       </main>
     </div>

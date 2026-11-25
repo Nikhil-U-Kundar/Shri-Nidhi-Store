@@ -1,6 +1,6 @@
 import { Lock, LogOut, MapPin, Package, User, Wallet } from 'lucide-react';
 import { useOrders } from '@/entities/order';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useNavigation, type AccountSubTab } from '@/shared/lib/navigation';
 import { AddressesSection } from './AddressesSection';
 import { KhataSection } from './KhataSection';

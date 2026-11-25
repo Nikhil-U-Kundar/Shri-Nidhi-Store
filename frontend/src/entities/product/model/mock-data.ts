@@ -1,5 +1,5 @@
 import type { Product } from '../model/types';
-import { landingImages } from '@/shared/config/images';
+import { landingImages } from '@/shared/config';
 
 export const initialProducts: Product[] = [
   {

@@ -1,4 +1,4 @@
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useNavigation } from '@/shared/lib/navigation';
 import { AdminPage } from '@/pages/admin';
 import { AccountPage } from '@/pages/account';
@@ -7,7 +7,7 @@ import { StorefrontPage } from '@/pages/storefront';
 import { TrackingPage } from '@/pages/tracking';
 import { CategoryNav } from '@/widgets/category-nav';
 import { SiteHeader } from '@/widgets/site-header';
-import { GlobalOverlays } from './ui/GlobalOverlays';
+import { GlobalOverlays } from './GlobalOverlays';
 
 /** Chooses between the shop-owner console and the customer storefront. */
 export function AppShell() {

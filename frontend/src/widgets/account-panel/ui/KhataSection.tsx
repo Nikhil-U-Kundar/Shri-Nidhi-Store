@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { QrCode, RefreshCw } from 'lucide-react';
 import { khataApi, type KhataPassbook } from '@/entities/khata';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { errorMessage } from '@/shared/lib/errors';
 
 const formatINR = (amount: number) => `₹${amount.toLocaleString('en-IN')}`;

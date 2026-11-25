@@ -1,6 +1,6 @@
 import { Clock, Facebook, Instagram, MapPin, Phone } from 'lucide-react';
 import { useCatalog } from '@/entities/product';
-import { STORE, DELIVERY } from '@/shared/config/store';
+import { STORE, DELIVERY } from '@/shared/config';
 import { scrollToCatalog } from '@/shared/lib/scroll';
 import { BuildBadge } from '@/shared/ui/BuildBadge';
 

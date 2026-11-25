@@ -1,4 +1,4 @@
-import { fallbackProductImage } from '@/shared/config/images';
+import { fallbackProductImage } from '@/shared/config';
 import type { Product } from '../model/types';
 
 /** Shape of a product row as returned by the Sri Nidhi API. */

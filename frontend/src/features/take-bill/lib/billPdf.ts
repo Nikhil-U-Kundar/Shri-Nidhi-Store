@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import type { Bill } from '@/entities/bill';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 
 const PAGE_WIDTH_MM = 105; // A6-width receipt paper
 const MARGIN_MM = 6;

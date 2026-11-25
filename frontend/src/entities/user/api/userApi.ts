@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api';
 import type { Address, KhataTransaction } from '../model/types';
 
 /** Customer or owner record as returned by the auth and profile endpoints. */

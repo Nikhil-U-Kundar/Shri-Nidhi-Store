@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
 import { Modal } from '@/shared/ui/Modal';
-import { useAuth } from '../model/AuthProvider';
+import { useAuth } from '@/entities/user';
 
 type Mode = 'signin' | 'signup';
 

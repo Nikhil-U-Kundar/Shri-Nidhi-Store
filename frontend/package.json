@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:fsd": "steiger ./src"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
@@ -17,11 +18,13 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@feature-sliced/steiger-plugin": "^0.8.2",
     "@tailwindcss/vite": "^4.3.3",
     "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "steiger": "^0.10.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vite": "^8.3.0"

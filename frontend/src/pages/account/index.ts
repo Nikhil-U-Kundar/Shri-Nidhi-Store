@@ -1,1 +1,1 @@
-export { AccountPanel as AccountPage } from '@/widgets/account-panel';
+export { AccountPage } from './ui/AccountPage';

@@ -1,1 +1,1 @@
-export { OrderTracker as TrackingPage } from '@/widgets/order-tracker';
+export { TrackingPage } from './ui/TrackingPage';

@@ -1,5 +1,5 @@
-import { apiRequest } from '@/shared/api/client';
-import type { ApiUser } from '@/entities/user';
+import { apiRequest } from '@/shared/api';
+import type { ApiUser } from './userApi';
 
 export interface AuthResponse {
   token: string;

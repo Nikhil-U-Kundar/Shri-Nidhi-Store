@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Eye, Package, Star } from 'lucide-react';
 import type { Product } from '../model/types';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
 
 interface ProductCardProps {
   product: Product;

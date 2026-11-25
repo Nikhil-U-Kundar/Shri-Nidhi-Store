@@ -1,4 +1,4 @@
-import { APP_VERSION } from '@/version';
+import { APP_VERSION } from '../config/version';
 
 /** Version line shown at the bottom of every page. */
 export function BuildBadge({ className = '' }: { className?: string }) {

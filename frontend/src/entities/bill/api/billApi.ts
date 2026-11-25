@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api';
 import type { Bill, NewBill } from '../model/types';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

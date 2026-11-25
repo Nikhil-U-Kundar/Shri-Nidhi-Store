@@ -1,4 +1,4 @@
-import { AppProviders } from './providers/AppProviders';
+import { AppProviders } from './AppProviders';
 import { AppShell } from './AppShell';
 
 export default function App() {

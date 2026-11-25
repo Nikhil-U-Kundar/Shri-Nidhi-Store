@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { X } from 'lucide-react';
 import type { Address } from '@/entities/user';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 import { useAddressActions } from '../model/useAddressActions';
 
 const ADDRESS_TITLES = ['Home', 'Office', 'Parents'] as const;

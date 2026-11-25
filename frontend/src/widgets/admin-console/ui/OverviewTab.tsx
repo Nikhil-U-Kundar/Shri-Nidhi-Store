@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, TrendingUp } from 'lucide-react';
 import { useCatalog } from '@/entities/product';
 import { useOrders } from '@/entities/order';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
 import { AddProductDialog } from '@/features/product-admin';
 
 const DAILY_TREND = [

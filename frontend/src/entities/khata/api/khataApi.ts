@@ -1,4 +1,4 @@
-import { API_BASE, apiRequest } from '@/shared/api/client';
+import { API_BASE, apiRequest } from '@/shared/api';
 
 export interface KhataEntry {
   id: string;
