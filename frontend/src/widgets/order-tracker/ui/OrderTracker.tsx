@@ -1,6 +1,6 @@
 import { Bike, ChevronLeft, Phone, Printer, Share2 } from 'lucide-react';
 import { ORDER_STATUSES, useOrders } from '@/entities/order';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 import { useNavigation } from '@/shared/lib/navigation';
 import { useToast } from '@/shared/ui/toast';
 

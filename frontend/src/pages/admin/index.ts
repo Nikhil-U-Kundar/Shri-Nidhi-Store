@@ -1,1 +1,1 @@
-export { AdminConsole as AdminPage } from '@/widgets/admin-console';
+export { AdminPage } from './ui/AdminPage';

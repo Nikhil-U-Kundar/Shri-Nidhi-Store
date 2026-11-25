@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { landingImages } from '@/shared/config/images';
+import { landingImages } from '@/shared/config';
 import { Modal } from '@/shared/ui/Modal';
 import { ACCEPTED_IMAGE_TYPES, type Product } from '@/entities/product';
 import { useProductActions } from '../model/useProductActions';

@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { GUEST_PROFILE, userApi, type UserProfile } from '@/entities/user';
-import { toUserProfile } from '@/entities/user/lib/mapper';
-import { clearSession, getStoredUser, getToken, saveSession } from '@/shared/api/session';
+import { userApi } from '../api/userApi';
+import { toUserProfile } from '../lib/mapper';
+import { GUEST_PROFILE, type UserProfile } from './types';
+import { clearSession, getStoredUser, getToken, saveSession } from '@/shared/api';
 import { useToast } from '@/shared/ui/toast';
 import { authApi, type AuthResponse } from '../api/authApi';
 

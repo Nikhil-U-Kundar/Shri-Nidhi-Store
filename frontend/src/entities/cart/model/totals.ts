@@ -1,4 +1,4 @@
-import { DELIVERY } from '@/shared/config/store';
+import { DELIVERY } from '@/shared/config';
 import type { CartItem } from './types';
 
 export interface CartTotals {

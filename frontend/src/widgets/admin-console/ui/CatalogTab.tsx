@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { ACCEPTED_IMAGE_TYPES, useCatalog } from '@/entities/product';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
 import { AddProductDialog, useProductActions } from '@/features/product-admin';
 
 export function CatalogTab() {

@@ -1,6 +1,6 @@
 import { ArrowRight, Coffee, Cookie, Droplet, Flame, Heart, Sparkle, Sparkles, ShieldCheck, Wallet, Wheat, Zap, type LucideIcon } from 'lucide-react';
 import { useCatalog } from '@/entities/product';
-import { landingImages } from '@/shared/config/images';
+import { landingImages } from '@/shared/config';
 import { useNavigation } from '@/shared/lib/navigation';
 import { scrollToCatalog } from '@/shared/lib/scroll';
 

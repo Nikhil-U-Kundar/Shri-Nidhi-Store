@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api';
 import type { Product } from '../model/types';
 import { mapApiProduct, resolveImageUrl, toApiProductBody, toApiProductPatch, type ApiProduct } from '../lib/mapper';
 

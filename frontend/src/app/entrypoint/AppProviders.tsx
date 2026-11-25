@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { AuthProvider, useAuth } from '@/features/auth';
+import { AuthProvider, useAuth } from '@/entities/user';
 import { CartProvider } from '@/entities/cart';
 import { CatalogProvider } from '@/entities/product';
 import { OrdersProvider } from '@/entities/order';

@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { FileText, Plus, Printer, Search, ShoppingBag, Trash2, Wallet, Banknote, CreditCard, QrCode } from 'lucide-react';
 import { useBilling, type BillLineItem, type BillPaymentMethod } from '@/entities/bill';
 import { useCatalog, type Product } from '@/entities/product';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { QuantityStepper } from '@/shared/ui/QuantityStepper';
 import { useBillActions } from '../model/useBillActions';
 import { BillArchive } from './BillArchive';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { NewAddressForm, useAddressActions } from '@/features/address-book';
 
 export function AddressesSection() {

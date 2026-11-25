@@ -1,4 +1,4 @@
-import { CATEGORIES } from '@/shared/config/categories';
+import { CATEGORIES } from '@/shared/config';
 import { ALL_PRODUCTS } from './filter';
 
 /** Category names in shop order, with "All Products" first and any unlisted categories appended. */

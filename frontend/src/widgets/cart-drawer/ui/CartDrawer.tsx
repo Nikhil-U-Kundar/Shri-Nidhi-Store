@@ -2,7 +2,7 @@ import { ArrowRight, ShoppingBag, Trash2, X, Zap } from 'lucide-react';
 import { useCart } from '@/entities/cart';
 import { useCartActions } from '@/features/cart-actions';
 import { QuantityStepper } from '@/shared/ui/QuantityStepper';
-import { DELIVERY } from '@/shared/config/store';
+import { DELIVERY } from '@/shared/config';
 import { useNavigation } from '@/shared/lib/navigation';
 
 export function CartDrawer() {

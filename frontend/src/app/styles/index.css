@@ -58,3 +58,38 @@
     width: 100%;
   }
 }
+
+/* One corner radius for every button. Left outside @layer so it overrides the rounded-* utilities. */
+button {
+  border-radius: 0.375rem;
+}
+
+/* Glass look for the owner console. Scoped to .admin-glass, so the storefront is unchanged. */
+.admin-glass {
+  background:
+    radial-gradient(at 15% 10%, #a7f3d0 0, transparent 45%),
+    radial-gradient(at 85% 5%, #bae6fd 0, transparent 40%),
+    radial-gradient(at 75% 90%, #fde68a 0, transparent 45%),
+    radial-gradient(at 10% 85%, #ddd6fe 0, transparent 40%),
+    #f5f5f4;
+  background-attachment: fixed;
+}
+.admin-glass .glass-panel,
+.admin-glass main .bg-white:where(:not([role='dialog'], [role='dialog'] *)) {
+  background-color: rgb(255 255 255 / 0.55);
+  border-color: rgb(255 255 255 / 0.75);
+  box-shadow: 0 8px 32px rgb(15 23 42 / 0.08);
+}
+/* Blur only the large surfaces: it is costly, and none of them hold fixed-position children. */
+.admin-glass .glass-panel,
+.admin-glass main :where(.rounded-2xl, .rounded-3xl).bg-white:where(:not([role='dialog'], [role='dialog'] *)) {
+  backdrop-filter: blur(18px) saturate(160%);
+}
+.admin-glass main :where(.bg-stone-50, .bg-stone-100):where(:not([role='dialog'], [role='dialog'] *)) {
+  background-color: rgb(255 255 255 / 0.35);
+}
+.admin-glass .glass-dark {
+  background-color: rgb(28 25 23 / 0.72);
+  border-color: rgb(255 255 255 / 0.12);
+  backdrop-filter: blur(18px) saturate(160%);
+}

@@ -1,6 +1,6 @@
 import { ChevronRight, LogIn, LogOut, MapPin, Package, Sparkles, Wallet } from 'lucide-react';
 import { ALL_PRODUCTS, buildCategoryList, useCatalog } from '@/entities/product';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useNavigation, type CustomerTab } from '@/shared/lib/navigation';
 import { scrollToCatalog } from '@/shared/lib/scroll';
 import { SideDrawer } from '@/shared/ui/SideDrawer';

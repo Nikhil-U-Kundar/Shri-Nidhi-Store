@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, LogOut, Package, User, Wallet } from 'lucide-react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useNavigation } from '@/shared/lib/navigation';
 
 function initials(name: string): string {

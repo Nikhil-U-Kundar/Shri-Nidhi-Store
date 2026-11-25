@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { orderApi, useOrders, type OrderStatus } from '@/entities/order';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useCatalog } from '@/entities/product';
 import { errorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/ui/toast';

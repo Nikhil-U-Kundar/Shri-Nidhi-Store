@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-import { userApi, type Address } from '@/entities/user';
-import { useAuth } from '@/features/auth';
+import { userApi, type Address, useAuth } from '@/entities/user';
 import { errorMessage } from '@/shared/lib/errors';
 import { useToast } from '@/shared/ui/toast';
 

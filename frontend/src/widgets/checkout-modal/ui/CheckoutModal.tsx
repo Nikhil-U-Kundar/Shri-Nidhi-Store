@@ -1,12 +1,14 @@
 import { useState, type ReactNode } from 'react';
 import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, Plus, ShieldCheck, X } from 'lucide-react';
 import { useCart } from '@/entities/cart';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { NewAddressForm } from '@/features/address-book';
 import { SchedulePicker } from '@/features/schedule-picker';
 import { useNavigation } from '@/shared/lib/navigation';
 import { Modal } from '@/shared/ui/Modal';
 import { usePlaceOrder } from '../model/usePlaceOrder';
+import { checkoutApi, newCheckoutSessionId, type CheckoutDetails, type CheckoutStep } from '@/entities/checkout';
+import { useToast } from '@/shared/ui/toast';
 import { PaymentGatewayModal, type GatewayRequest } from './PaymentGatewayModal';
 
 const STEPS = ['Contact', 'Address', 'Delivery', 'Payment'] as const;
@@ -40,6 +42,14 @@ export function CheckoutModal() {
   const { items, totals } = useCart();
   const { isLoggedIn, user, setLoginOpen } = useAuth();
   const placeOrder = usePlaceOrder();
+  const { addToast } = useToast();
+  // One id per checkout attempt, so every step of this attempt is stored together.
+  const [sessionId] = useState(newCheckoutSessionId);
+
+  /** Save a checkout step. A failed save is reported, so the shopper knows it was not recorded. */
+  const recordStep = (step: CheckoutStep, details: CheckoutDetails) => {
+    checkoutApi.saveStep(sessionId, step, details).catch(() => addToast('Could not save this checkout step', 'error'));
+  };
 
   const [step, setStep] = useState(1);
   const [customerName, setCustomerName] = useState(user.name);
@@ -71,6 +81,18 @@ export function CheckoutModal() {
       customerPhone: customerPhone || user.phone,
     };
 
+    recordStep('payment', {
+      paymentMethod,
+      deliveryAddress: request.deliveryAddress,
+      deliveryMode,
+      deliveryDate: scheduleDate,
+      deliverySlotId: scheduleSlotId,
+      contactName: request.customerName,
+      contactPhone: request.customerPhone,
+      itemsTotal: totals.subtotal,
+      orderTotal: totals.finalTotal,
+    });
+
     if (paymentMethod === UPI_METHOD || paymentMethod === CARD_METHOD) {
       setCheckoutOpen(false);
       setGateway({ ...request, amount: totals.finalTotal });
@@ -78,7 +100,8 @@ export function CheckoutModal() {
     }
 
     placeOrder(request)
-      .then(() => {
+      .then((order) => {
+        recordStep('placed', { orderNumber: order.id });
         setCheckoutOpen(false);
         setCustomerTab('tracking');
       })
@@ -202,7 +225,7 @@ export function CheckoutModal() {
                   </div>
                 )}
 
-                <button type="button" onClick={() => setStep(2)} className={`${PRIMARY_BUTTON} w-full`}>
+                <button type="button" onClick={() => { recordStep('contact', { contactName: customerName, contactPhone: customerPhone }); setStep(2); }} className={`${PRIMARY_BUTTON} w-full`}>
                   <span>Continue to Address Selection</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
@@ -286,7 +309,7 @@ export function CheckoutModal() {
                       <ArrowLeft className="h-3.5 w-3.5" />
                       <span>Back</span>
                     </button>
-                    <button type="button" onClick={() => setStep(3)} className={PRIMARY_BUTTON}>
+                    <button type="button" onClick={() => { recordStep('address', { deliveryAddress: chosenAddress?.text ?? '' }); setStep(3); }} className={PRIMARY_BUTTON}>
                       <span>Continue to Delivery Speed</span>
                       <ArrowRight className="h-4 w-4" />
                     </button>
@@ -343,7 +366,7 @@ export function CheckoutModal() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setStep(4)}
+                    onClick={() => { recordStep('delivery', { deliveryMode, deliveryDate: scheduleDate, deliverySlotId: scheduleSlotId }); setStep(4); }}
                     disabled={!scheduleReady}
                     className={`${PRIMARY_BUTTON} disabled:cursor-not-allowed disabled:bg-stone-300`}
                     >
@@ -438,7 +461,8 @@ export function CheckoutModal() {
           request={gateway}
           onClose={() => setGateway(null)}
           onPaid={async (request) => {
-            await placeOrder(request);
+            const order = await placeOrder(request);
+            recordStep('placed', { orderNumber: order.id });
             setGateway(null);
             setCustomerTab('tracking');
           }}

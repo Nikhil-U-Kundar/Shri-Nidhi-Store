@@ -1,20 +1,18 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, BookOpen, Boxes, FileText, LayoutDashboard, LogOut, Menu, Package } from 'lucide-react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 import { useCatalog } from '@/entities/product';
 import { useOrders } from '@/entities/order';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
+import { useNavigation, type AdminTab } from '@/shared/lib/navigation';
 import { SideDrawer } from '@/shared/ui/SideDrawer';
 import { BuildBadge } from '@/shared/ui/BuildBadge';
-import { PosBilling } from '@/widgets/pos-billing';
 import { OverviewTab } from './OverviewTab';
 import { OrdersTab } from './OrdersTab';
 import { CatalogTab } from './CatalogTab';
 import { KhataTab } from './KhataTab';
 import { InventoryTab } from './InventoryTab';
 import { ReportsTab } from './ReportsTab';
-
-type AdminTab = 'dashboard' | 'orders' | 'products' | 'khata' | 'inventory' | 'reports' | 'billing';
 
 interface NavItem {
   id: AdminTab;
@@ -23,12 +21,17 @@ interface NavItem {
   badge?: { value: number; tone: 'amber' | 'red' };
 }
 
+interface AdminConsoleProps {
+  /** Counter billing screen, supplied by the page. */
+  billing: ReactNode;
+}
+
 /** Shop-owner console: a sidebar on desktop, and the same hamburger menu as the storefront on phones. */
-export function AdminConsole() {
+export function AdminConsole({ billing }: AdminConsoleProps) {
   const { user, logout } = useAuth();
   const { products } = useCatalog();
   const { orders } = useOrders();
-  const [tab, setTab] = useState<AdminTab>('dashboard');
+  const { adminTab: tab, setAdminTab: setTab } = useNavigation();
   const [isMenuOpen, setMenuOpen] = useState(false);
 
   const pendingOrders = orders.filter((o) => o.status !== 'Delivered').length;
@@ -80,9 +83,9 @@ export function AdminConsole() {
     });
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-100 text-stone-900 md:flex-row">
+    <div className="admin-glass flex min-h-screen flex-col text-stone-900 md:flex-row">
       {/* Phone top bar: brand and the hamburger that opens the admin menu. */}
-      <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-stone-800 bg-stone-900 px-3 py-2.5 text-white md:hidden">
+      <header className="glass-dark sticky top-0 z-40 flex items-center gap-3 border-b border-stone-800 bg-stone-900 px-3 py-2.5 text-white md:hidden">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
@@ -121,9 +124,9 @@ export function AdminConsole() {
       )}
 
       {/* Desktop sidebar. */}
-      <aside className="hidden w-64 shrink-0 flex-col justify-between border-r border-stone-800 bg-stone-900 text-stone-300 md:flex">
+      <aside className="glass-dark hidden w-64 shrink-0 flex-col justify-between border-r border-stone-800 bg-stone-900 text-stone-300 md:flex">
         <div>
-          <div className="flex h-16 items-center gap-3 border-b border-stone-800 bg-stone-950 px-6">
+          <div className="flex h-16 items-center gap-3 border-b border-stone-800 bg-stone-950/30 px-6">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white">
               <Boxes className="h-4 w-4" />
             </span>
@@ -137,7 +140,7 @@ export function AdminConsole() {
           </nav>
         </div>
 
-        <div className="border-t border-stone-800 bg-stone-950 p-4">
+        <div className="border-t border-stone-800 bg-stone-950/30 p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-800 text-xs font-bold text-emerald-100">{initials}</div>
             <div className="min-w-0 text-xs">
@@ -163,7 +166,7 @@ export function AdminConsole() {
         {tab === 'khata' && <KhataTab />}
         {tab === 'inventory' && <InventoryTab />}
         {tab === 'reports' && <ReportsTab />}
-        {tab === 'billing' && <PosBilling />}
+        {tab === 'billing' && billing}
         <BuildBadge className="pt-8" />
       </main>
     </div>

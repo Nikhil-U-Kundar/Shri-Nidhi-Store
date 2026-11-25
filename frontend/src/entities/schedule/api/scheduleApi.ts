@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api';
 
 export interface DeliverySlot {
   id: string;

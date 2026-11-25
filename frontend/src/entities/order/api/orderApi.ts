@@ -1,4 +1,4 @@
-import { apiRequest } from '@/shared/api/client';
+import { apiRequest } from '@/shared/api';
 import type { Order, OrderStatus } from '../model/types';
 
 export interface NewOrderRequest {

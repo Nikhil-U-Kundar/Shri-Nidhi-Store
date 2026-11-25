@@ -1,6 +1,6 @@
 import { Printer, X } from 'lucide-react';
 import { useOrders, type OrderItem } from '@/entities/order';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 import { Modal } from '@/shared/ui/Modal';
 
 /** Printable tax-invoice receipt for an order. Print CSS in index.css isolates #printable-receipt. */

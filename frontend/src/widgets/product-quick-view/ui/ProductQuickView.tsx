@@ -4,7 +4,7 @@ import { useCatalog } from '@/entities/product';
 import { useCartActions } from '@/features/cart-actions';
 import { useNavigation } from '@/shared/lib/navigation';
 import { Modal } from '@/shared/ui/Modal';
-import { LOW_STOCK_THRESHOLD } from '@/shared/config/store';
+import { LOW_STOCK_THRESHOLD } from '@/shared/config';
 
 /** Product detail dialog with the purchase controls. */
 export function ProductQuickView() {

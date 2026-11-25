@@ -1,5 +1,5 @@
 import { Printer } from 'lucide-react';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 
 // Summary figures are the original dashboard's placeholders until reporting is backed by real data.
 const SUMMARY_ROWS = [

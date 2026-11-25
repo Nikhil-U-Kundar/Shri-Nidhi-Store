@@ -1,6 +1,6 @@
 import { Download, Printer, Share2, X } from 'lucide-react';
 import { useBilling, type Bill } from '@/entities/bill';
-import { STORE } from '@/shared/config/store';
+import { STORE } from '@/shared/config';
 import { Modal } from '@/shared/ui/Modal';
 import { useToast } from '@/shared/ui/toast';
 import { billPdfFilename, buildBillPdf } from '../lib/billPdf';

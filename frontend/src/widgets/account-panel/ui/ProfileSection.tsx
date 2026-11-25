@@ -1,4 +1,4 @@
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/entities/user';
 
 const READ_ONLY_INPUT = 'w-full rounded-xl border border-stone-200 bg-stone-50 p-2.5 font-medium text-stone-900';
 
