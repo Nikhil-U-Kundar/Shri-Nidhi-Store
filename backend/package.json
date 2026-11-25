@@ -8,7 +8,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/db/seed.js",
-    "ensure-owner": "node src/db/ensureOwner.js"
+    "ensure-owner": "node src/db/ensureOwner.js",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,9 @@
     "uuid": "^14.0.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@vitest/coverage-v8": "^5.1.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.2",
+    "vitest": "^5.1.2"
   }
 }
