@@ -13,6 +13,7 @@ import profileRoutes from './routes/profile.js';
 import scheduleRoutes from './routes/schedule.js';
 import productImageRoutes from './routes/productImages.js';
 import paymentQrRoutes from './routes/paymentQr.js';
+import checkoutRoutes from './routes/checkout.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,6 +64,7 @@ app.use('/api', profileRoutes);
 app.use('/api', scheduleRoutes);
 app.use('/api', productImageRoutes);
 app.use('/api', paymentQrRoutes);
+app.use('/api', checkoutRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

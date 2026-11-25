@@ -252,4 +252,38 @@ CREATE TABLE IF NOT EXISTS bill_items (
 );
 CREATE INDEX IF NOT EXISTS idx_bill_items_bill ON bill_items(bill_id);
 
+-- ---------------------------------------------------------------------------
+-- Checkout trail: every step a shopper takes, kept even if they never finish.
+-- One row per checkout session; each step updates the row and adds a step record.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS checkout_sessions (
+  id              uuid PRIMARY KEY,
+  created_at      timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  user_id         uuid REFERENCES users(id) ON DELETE SET NULL,
+  current_step    varchar NOT NULL,
+  status          varchar NOT NULL DEFAULT 'in_progress',
+  contact_name    varchar NOT NULL DEFAULT '',
+  contact_phone   varchar NOT NULL DEFAULT '',
+  delivery_address text NOT NULL DEFAULT '',
+  delivery_mode   varchar NOT NULL DEFAULT '',
+  delivery_date   date,
+  delivery_slot_id uuid,
+  payment_method  varchar NOT NULL DEFAULT '',
+  items_total     numeric NOT NULL DEFAULT 0,
+  order_id        uuid REFERENCES orders(id) ON DELETE SET NULL,
+  CONSTRAINT checkout_sessions_status_valid CHECK (status IN ('in_progress', 'placed'))
+);
+CREATE INDEX IF NOT EXISTS idx_checkout_sessions_updated ON checkout_sessions(updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS checkout_steps (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at  timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  session_id  uuid NOT NULL REFERENCES checkout_sessions(id) ON DELETE CASCADE,
+  step        varchar NOT NULL,
+  details     jsonb NOT NULL DEFAULT '{}'::jsonb
+);
+CREATE INDEX IF NOT EXISTS idx_checkout_steps_session ON checkout_steps(session_id, created_at);
+
 COMMIT;
